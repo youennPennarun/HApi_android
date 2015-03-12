@@ -1,0 +1,6 @@
+
+    <resources>
+        <color name="list_divider">#10FF10</color>
+        <color name="alarm_enable">#212121</color>
+        <color name="alarm_disable">#BDBDBD</color>
+    </resources>

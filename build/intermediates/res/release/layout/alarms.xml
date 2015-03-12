@@ -1,0 +1,23 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/alarm_content_layout"
+    style="@layout/alarm_list"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical" >
+
+    <TextView
+        android:id="@+id/title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Alarms"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
+
+    <ListView
+        android:id="@+id/alarmList"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:divider="#0000CC"
+        android:dividerHeight="0dp" >
+    </ListView>
+
+</LinearLayout><!-- From: file:/home/nolitsou/workspace/hapi/res/layout/alarms.xml -->

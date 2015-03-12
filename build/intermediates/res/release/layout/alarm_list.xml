@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/alarm_item_layout"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="8dp" >
+
+    <LinearLayout
+        android:id="@+id/alarmHeader"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical" >
+
+        <TextView
+            android:id="@+id/alarmDate"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="Large Text"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/alarmDetailsContent"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical" >
+
+        <CheckBox
+            android:id="@+id/alarmEnabled"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Enable" />
+
+    </LinearLayout>
+
+</LinearLayout><!-- From: file:/home/nolitsou/workspace/hapi/res/layout/alarm_list.xml -->

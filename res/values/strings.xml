@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">hapi</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="status_disconnected">Disconnected</string>
+    <string name="artist_label">Artist:</string>
+    <string name="track_label">Track:</string>
+    <string name="play_label">Play</string>
+    <string name="pause_label">Pause</string>
+    <string name="previous_label">Previous</string>
+    <string name="next_label">Next</string>
+    <string name="volume_label">Volume</string>
+    <string name="play_random_label">Play random songs</string>
+    <string name="pi_not_connected_label">Pi not connected</string>
+    <string name="search_artist_label">Search an artist</string>
+    
+    
+    <string name="action_settings">Settings</string>
+    <string name="drawer_open">Slider Menu Opened</string>
+    <string name="drawer_close">Slider Menu Closed</string>
+     
+    <!-- Nav Drawer Menu Items -->
+    
+    <string-array name="menus">
+        <item>Home</item>
+        <item>Android</item>
+        <item>Xamarin</item>
+        <item>WordPress</item>
+        <item>Java</item>
+        <item>Tools</item>
+        <item>Servlets</item>
+    </string-array>
+     
+    <!-- Nav Drawer List Item Icons -->
+    <!-- Keep them in order as the titles are in -->
+     
+    <!-- Content Description -->
+    <string name="desc_list_item_icon">Item Icon</string>
+
+</resources>

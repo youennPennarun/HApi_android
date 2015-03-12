@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/actionbar"
+    android:layout_width="match_parent"
+    android:layout_height="50dp"
+    android:background="#494949" >
+
+    <ImageView
+        android:id="@+id/actionbar_home"
+        android:layout_width="35dp"
+        android:layout_height="35dp"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="8dp"
+        android:src="@drawable/ic_launcher" />
+
+    <TextView
+        android:id="@+id/title_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="10dp"
+        android:layout_toRightOf="@id/actionbar_home"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textColor="#fff"
+        android:textStyle="bold" />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true" >
+
+        <ImageButton
+            android:id="@+id/actionbar_player"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="8dp"
+            android:background="@null"
+            android:src="@android:drawable/ic_media_play" />
+
+        <ImageButton
+            android:id="@+id/actionbar_settings"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="8dp"
+            android:background="@null"
+            android:src="@android:drawable/ic_menu_preferences" />
+    </LinearLayout>
+
+</RelativeLayout>

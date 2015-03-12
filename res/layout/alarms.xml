@@ -1,0 +1,36 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/alarm_content_layout"
+    style="@layout/alarm_list"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:layout_gravity="center"
+    android:orientation="vertical" >
+
+    <ListView
+        android:id="@+id/alarmList"
+        android:layout_width="fill_parent"
+        android:layout_height="match_parent"
+        android:divider="#0000CC"
+        android:dividerHeight="0dp" >
+    </ListView>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_gravity="bottom"
+        android:gravity="bottom"
+        android:orientation="vertical"
+        android:background="#99090909" >
+
+        <TextView
+            android:id="@+id/addAlarmButton"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_centerInParent="true"
+            android:layout_gravity="center"
+            android:text="Large Text"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textColor="#e9e9e9" />
+    </LinearLayout>
+
+</FrameLayout>

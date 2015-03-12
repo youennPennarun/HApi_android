@@ -1,0 +1,12 @@
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    style="@style/leftBehindMenuScroll"
+    android:id="@+id/drawermenu_left" >
+
+    <LinearLayout style="@style/behindMenuScrollContent"
+        android:paddingTop="25dp" >
+        <TextView
+            android:id="@+id/menu_goto_alarm"
+            style="@style/behindMenuItemTitle"
+            android:text="Alarms" />
+    </LinearLayout>
+</ScrollView>

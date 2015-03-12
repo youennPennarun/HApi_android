@@ -1,0 +1,58 @@
+<!--
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="${relativePackage}.${activityClass}" >
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/scrollViewSearchMusic"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_marginLeft="20dp"
+    android:layout_marginRight="0dp"
+    android:layout_marginStart="20dp"
+    android:layout_marginEnd="20dp"
+    android:orientation="vertical" >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="15dp"
+        android:layout_marginRight="10dp"
+    android:layout_marginEnd="10dp" >
+
+        <TextView
+            android:id="@+id/textView1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Search:"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+        <EditText
+            android:id="@+id/searchQuery"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:ems="10"
+            android:hint="artist name"
+            android:inputType="text" >
+
+            <requestFocus />
+        </EditText>
+
+        <ImageView
+            android:id="@+id/searchBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:adjustViewBounds="true"
+            android:src="@android:drawable/ic_menu_search" />
+    </LinearLayout>
+
+    <ListView
+        android:id="@+id/artistSearchList"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" >
+    </ListView>
+
+</LinearLayout>

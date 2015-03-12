@@ -1,0 +1,52 @@
+<resources>
+
+    <!--
+        Base application theme, dependent on API level. This theme is replaced
+        by AppBaseTheme from res/values-vXX/styles.xml on newer devices.
+    -->
+    <style name="AppBaseTheme" parent="android:Theme.Light">
+        <!--
+            Theme customizations available in newer API levels can go in
+            res/values-vXX/styles.xml, while customizations related to
+            backward-compatibility can go here.
+        -->
+    </style>
+
+    <!-- Application theme. -->
+    <style name="AppTheme" parent="AppBaseTheme">
+        <!-- All customizations that are NOT specific to a particular API-level can go here. -->
+    </style>
+    <style name="leftBehindMenuScroll">
+        <item name="android:layout_width">210dp</item>
+        <item name="android:layout_height">fill_parent</item>
+        <item name="android:background">#ffffff</item>
+    </style>
+    <style name="rightBehindMenuScroll">
+        <item name="android:layout_width">200dp</item>
+        <item name="android:layout_height">fill_parent</item>
+        <item name="android:background">@drawable/rightbg</item>
+    </style>
+    <style name="behindMenuScrollContent">
+        <item name="android:layout_width">fill_parent</item>
+        <item name="android:layout_height">fill_parent</item>
+        <item name="android:orientation">vertical</item>
+        <item name="android:padding">8dp</item>
+    </style>
+    <style name="behindMenuItemTitle">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginLeft">15dp</item>
+        <item name="android:layout_marginBottom">8dp</item>
+        <item name="android:textSize">25dp</item>
+        <item name="android:textColor">#393939</item>
+    </style>
+    <style name="behindMenuItemLabel">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginLeft">8dp</item>
+        <item name="android:layout_marginBottom">8dp</item>
+        <item name="android:textSize">18sp</item>
+        <item name="android:textColor">#696969</item>
+    </style>
+
+</resources>

@@ -1,2 +1,2 @@
 # HApi_android
-android client for th HApi application
+android client for HApi application

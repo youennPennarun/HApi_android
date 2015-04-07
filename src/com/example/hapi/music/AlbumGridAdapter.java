@@ -3,6 +3,10 @@ package com.example.hapi.music;
 import java.io.InputStream;
 import java.util.ArrayList;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
 import android.graphics.BitmapFactory;
@@ -15,7 +19,9 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.hapi.PlayerControl;
 import com.example.hapi.R;
+import com.example.hapi.server.ServerLink;
 
 public class AlbumGridAdapter extends BaseAdapter {
 
@@ -44,6 +50,14 @@ public class AlbumGridAdapter extends BaseAdapter {
 		final TextView albumName = (TextView) view.findViewById(R.id.albumitem_name);
 		//albumCover.set
 		albumName.setText(mItems.get(position).getName());
+		view.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				Album album = mItems.get(position);
+				System.out.println("play album "+album.getName()+":");
+				PlayerControl.playAlbum(album);			
+			}
+		});
 
 		return view;
 	}

@@ -40,7 +40,6 @@ public class ServerLink {
 			ServerLink.setListeners();
 			getSocket().connect();
 			socket.emit("pi:is-logged-in");
-			socket.emit("pi:sound:volume:get");
 
 		} catch (URISyntaxException e) {
 			e.printStackTrace();

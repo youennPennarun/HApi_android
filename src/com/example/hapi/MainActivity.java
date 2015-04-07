@@ -35,7 +35,6 @@ public class MainActivity extends FragmentActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.app_activity_main);
-
 		ServerLink.setMainActivity(this);
 		Settings.loadSettings(this);
 		// Instantiate a ViewPager and a PagerAdapter.

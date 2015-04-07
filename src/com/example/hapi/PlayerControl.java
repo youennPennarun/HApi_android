@@ -1,8 +1,10 @@
 package com.example.hapi;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.example.hapi.music.Album;
 import com.example.hapi.music.Track;
 import com.example.hapi.server.ServerLink;
 
@@ -50,7 +52,6 @@ public class PlayerControl {
 			JSONObject data = new JSONObject();
 			try {
 				data.put("volume", volume+50);
-				System.out.println("new volume = "+(volume+50));
 				ServerLink.getSocket().emit("pi:sound:volume:set", data);
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block
@@ -78,5 +79,22 @@ public class PlayerControl {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+	public static void playAlbum(Album album) {
+		JSONObject json = new JSONObject();
+		try {
+			json.put("type", "trackset");
+			JSONArray list = new JSONArray();
+			for(Track track :  album.getTracks()) {
+				System.out.println(track.getName());
+				list.put(track.toJSON());
+			}
+			json.put("tracks", list);
+			ServerLink.getSocket().emit("pi:sound:play", json);
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 	}
 }

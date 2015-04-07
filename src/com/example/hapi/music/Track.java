@@ -51,4 +51,17 @@ public class Track {
 	public void setSpotify_uri(String spotify_uri) {
 		this.spotify_uri = spotify_uri;
 	}
+	public JSONObject toJSON() {
+		JSONObject json = new JSONObject();
+		try {
+			json.put("name", name);
+			json.put("id", spotify_id);
+			json.put("uri", spotify_uri);
+			return json;
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+	}
 }

@@ -23,7 +23,7 @@ public class RemotePlayer {
 				System.out.println(args[0]);
 				try {
 					int volume= ((JSONObject)args[0]).getJSONArray("volume").getInt(0);
-					PlayerControl.setVolume(Math.round(volume/2));	
+					PlayerControl.setVolume(volume-50);	
 					if (playerFragment != null) {
 						ServerLink.activity.runOnUiThread(new Runnable() {
 							@Override

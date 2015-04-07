@@ -40,6 +40,8 @@ public class PlayerFragment extends CustomFragment {
 
 		final ImageButton playButton = (ImageButton) getRootView().findViewById(R.id.playButton);
 		final ImageButton pauseButton = (ImageButton) getRootView().findViewById(R.id.pauseButton);
+		final ImageButton nextButton = (ImageButton) getRootView().findViewById(R.id.nextButton);
+		final ImageButton previousButton = (ImageButton) getRootView().findViewById(R.id.previousButton);
 
 		final Button searchArtistBtn = (Button) getRootView().findViewById(R.id.searchArtist);
 		final Button playRandom = (Button) getRootView().findViewById(R.id.playRandom);
@@ -63,7 +65,20 @@ public class PlayerFragment extends CustomFragment {
 				PlayerControl.pause();
 			}
 		});
-		final SeekBar volumeBar=(SeekBar) getRootView().findViewById(R.id.volumeBar);     
+		previousButton.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				PlayerControl.previous();
+			}
+		});
+		nextButton.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				PlayerControl.next();
+			}
+		});
+		final SeekBar volumeBar=(SeekBar) getRootView().findViewById(R.id.volumeBar);   
+		volumeBar.setProgress(PlayerControl.getVolume());
 		volumeBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
 			@Override
 			public void onStopTrackingTouch(SeekBar seekBar) {}

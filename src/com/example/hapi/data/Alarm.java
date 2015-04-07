@@ -15,6 +15,7 @@ import org.json.JSONObject;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 
 import com.example.hapi.AlarmFragment;
 import com.example.hapi.R;
@@ -26,6 +27,7 @@ public class Alarm implements Comparable{
 	private static AlarmFragment alarmFragment = null;
 	private static ArrayList<Alarm> alarms = new ArrayList<Alarm>();
 	public static ArrayAdapter<Alarm> notify;
+	public static RelativeLayout loadingAlarmsLL;
 	private String _id;
 	private Date time;
 	private boolean enable;
@@ -36,6 +38,7 @@ public class Alarm implements Comparable{
 		this.setTime(strToDate(json.getString("time")));
 		this.setEnable(json.getBoolean("enable"));
 		this.repeat = json.getBoolean("repeat");
+		System.out.println("enable? " + this.isEnable());
 	}
 	public Alarm(String _id, Date date, boolean enable, boolean repeat) {
 		this.set_id(_id);
@@ -101,6 +104,7 @@ public class Alarm implements Comparable{
 							Alarm.updateList();
 						}
 					}
+					
 				} catch (JSONException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -120,6 +124,7 @@ public class Alarm implements Comparable{
 							Alarm.updateList();
 						}
 					}
+					
 				} catch (JSONException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -200,9 +205,9 @@ public class Alarm implements Comparable{
 		ServerLink.activity.runOnUiThread(new Runnable(){
 			@Override
 			public void run() {
-				System.out.println("!!!!UPDATE!!!!!!!");
 				if (notify != null) {
 					Alarm.notify.notifyDataSetChanged();
+					loadingAlarmsLL.setVisibility(View.GONE);
 				}
 			}
 		});

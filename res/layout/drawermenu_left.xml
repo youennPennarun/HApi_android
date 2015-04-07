@@ -1,12 +1,50 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    style="@style/leftBehindMenuScroll"
-    android:id="@+id/drawermenu_left" >
+    android:id="@+id/drawermenu_left"
+    style="@style/leftBehindMenuScroll" >
 
-    <LinearLayout style="@style/behindMenuScrollContent"
+    <LinearLayout
+        style="@style/behindMenuScrollContent"
         android:paddingTop="25dp" >
-        <TextView
-            android:id="@+id/menu_goto_alarm"
-            style="@style/behindMenuItemTitle"
-            android:text="Alarms" />
+
+        <LinearLayout
+            android:id="@+id/menu_goto_alarms"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent" >
+
+            <ImageButton
+                android:id="@+id/actionbar_alarm_img"
+                android:background="@null"
+              	android:layout_height="30dp"
+              	android:layout_width="30dp"
+              	android:scaleType="fitXY"
+                android:src="@drawable/alarm" />
+
+            <TextView
+                android:id="@+id/menu_text_alarm"
+                style="@style/behindMenuItemTitle"
+                android:layout_height="wrap_content"
+                android:text="Alarms" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/menu_goto_settings"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent" >
+
+            <ImageButton
+                android:id="@+id/actionbar_settings_img"
+                android:background="@null"
+              	android:layout_height="30dp"
+              	android:layout_width="30dp"
+              	android:scaleType="fitXY"
+                android:src="@android:drawable/ic_menu_preferences" />
+
+            <TextView
+                android:id="@+id/menu_goto_settings_text"
+                style="@style/behindMenuItemTitle"
+                android:text="Settings" />
+        </LinearLayout>
     </LinearLayout>
+
 </ScrollView>

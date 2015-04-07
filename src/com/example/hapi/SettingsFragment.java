@@ -14,6 +14,7 @@ import android.widget.EditText;
 
 import com.example.hapi.data.Preferences;
 import com.example.hapi.data.Settings;
+import com.example.hapi.server.ServerLinkTask;
 
 public class SettingsFragment extends CustomFragment {
 	private ViewGroup rootView;
@@ -47,6 +48,8 @@ public class SettingsFragment extends CustomFragment {
 				prefs.edit().putString(Settings.PASSWORD_PREF_STR, passwordValue.getText().toString()).commit();
 				Settings.loadSettings(getActivity());
 				((MainActivity)getActivity()).changeFragment(new AlarmFragment());
+				ServerLinkTask task = new ServerLinkTask((MainActivity) getActivity());
+				task.execute(Settings.host);
 			}
 		});
 		return rootView;

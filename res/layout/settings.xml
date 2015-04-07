@@ -12,7 +12,8 @@
         <GridLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="10dp" >
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp" >
 
             <TextView
                 android:id="@+id/TextView01"
@@ -21,8 +22,10 @@
 
             <EditText
                 android:id="@+id/hostValue"
-                android:layout_columnWeight="1"
-                android:layout_gravity="fill_horizontal" />
+                android:layout_columnWeight="2"
+                android:layout_gravity="fill_horizontal"
+                android:ems="10"
+                android:singleLine="true" />
 
             <TextView
                 android:id="@+id/TextView02"
@@ -33,11 +36,9 @@
 
             <EditText
                 android:id="@+id/usernameValue"
-                android:layout_columnWeight="1"
                 android:layout_gravity="fill_horizontal"
-                android:ems="10" >
-
-                <requestFocus />
+                android:ems="10"
+                android:singleLine="true">
             </EditText>
 
             <TextView
@@ -51,21 +52,24 @@
                 android:id="@+id/passwordValue"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_columnWeight="1"
                 android:layout_gravity="fill_horizontal"
                 android:ems="10"
                 android:inputType="textPassword" />
 
+            <Button
+                android:id="@+id/saveSettings"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_column="1"
+                android:layout_columnSpan="1"
+                android:layout_columnWeight="2"
+                android:layout_gravity="right"
+                android:layout_marginTop="30dp"
+                android:layout_row="5"
+                android:singleLine="true"
+                android:text="Save" />
+
         </GridLayout>
-
-        <Button
-            android:id="@+id/saveSettings"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="end"
-            android:layout_marginTop="30dp"
-            android:text="Save" />
-
     </LinearLayout>
 
 </RelativeLayout>

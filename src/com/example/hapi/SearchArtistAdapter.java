@@ -34,7 +34,6 @@ public class SearchArtistAdapter extends ArrayAdapter<SearchArtist> {
 
 	@Override
 	public View getView(final int position, View convertView, ViewGroup parent) {
-		System.out.println("update view...");
 		final LayoutInflater inflater = (LayoutInflater) context
 				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		final View rowView = inflater.inflate(R.layout.search_artist_item, parent, false);

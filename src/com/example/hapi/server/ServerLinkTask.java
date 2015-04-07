@@ -133,7 +133,8 @@ public class ServerLinkTask extends AsyncTask<String, String, Void> {
 					//TextView t=(TextView)mainActivity.findViewById(R.id.connectionStatus); 
 					if (ServerLink.connect(url, token)) {
 						mainActivity.onConnectionSet();
-						mDialog.dismiss();
+						if(mDialog.isShowing())
+							mDialog.dismiss();
 					} else {
 						showError("connection error");
 					}

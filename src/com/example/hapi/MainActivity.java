@@ -38,14 +38,17 @@ public class MainActivity extends FragmentActivity {
 
 		ServerLink.setMainActivity(this);
 		Settings.loadSettings(this);
-		ServerLinkTask task = new ServerLinkTask(this);
-		task.execute(Settings.host);
 		// Instantiate a ViewPager and a PagerAdapter.
 
-		getSupportFragmentManager().beginTransaction().add(R.id.app_main_frame, mainFragment).addToBackStack(null).commit();
+		ServerLinkTask task = new ServerLinkTask(this);
+		if(Settings.host == null) {
+			getSupportFragmentManager().beginTransaction().add(R.id.app_main_frame, new SettingsFragment()).addToBackStack(null).commit();
+		} else {
+			task.execute(Settings.host);
+			getSupportFragmentManager().beginTransaction().add(R.id.app_main_frame, mainFragment).addToBackStack(null).commit();
+		}
 		mSlidingMenu = new SimpleSideDrawer( this );
 		mSlidingMenu.setLeftBehindContentView( R.layout.drawermenu_left );
-
 	}
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -69,14 +72,6 @@ public class MainActivity extends FragmentActivity {
 				mSlidingMenu.toggleLeftDrawer();
 			}
 		});
-		ImageButton actionbar_settings = (ImageButton) mCustomView
-				.findViewById(R.id.actionbar_settings);
-		actionbar_settings.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View view) {
-				changeFragment(new SettingsFragment());
-			}
-		});
 		ImageButton actionbar_player = (ImageButton) mCustomView
 				.findViewById(R.id.actionbar_player);
 		
@@ -90,12 +85,27 @@ public class MainActivity extends FragmentActivity {
 				}
 			}
 		});
-		TextView menuGotoAlarm = ((TextView)mSlidingMenu.getRootView().findViewById(R.id.menu_goto_alarm));
+		LinearLayout menuGotoAlarm = ((LinearLayout)mSlidingMenu.getRootView().findViewById(R.id.menu_goto_alarms));
 		menuGotoAlarm.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				if(!mainFragment.getClass().equals(AlarmFragment.class)) {
 					changeFragment(new AlarmFragment());
+				}
+				if(!mSlidingMenu.isClosed()) {
+					mSlidingMenu.toggleLeftDrawer();
+				}
+			}
+		});
+		LinearLayout menuGotoSettings = ((LinearLayout)mSlidingMenu.getRootView().findViewById(R.id.menu_goto_settings));
+		menuGotoSettings.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				if(!mainFragment.getClass().equals(SettingsFragment.class)) {
+					changeFragment(new SettingsFragment());
+				}
+				if(!mSlidingMenu.isClosed()) {
+					mSlidingMenu.toggleLeftDrawer();
 				}
 			}
 		});
@@ -149,6 +159,7 @@ public class MainActivity extends FragmentActivity {
 			}
 		}
 	}
+	/*
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		// Handle presses on the action bar items
@@ -160,15 +171,10 @@ public class MainActivity extends FragmentActivity {
 			return super.onOptionsItemSelected(item);
 		}
 	}
-	public void sendToSettings() {
-		// TODO Auto-generated method stub
-
-	}
-
+	*/
 	@Override
 	protected void onStart()
-	{   
-		// TODO Auto-generated method stub
+	{  
 		super.onStart();
 	}
 	public void setText(final int trackname, final String string) {
@@ -200,6 +206,10 @@ public class MainActivity extends FragmentActivity {
 	}
 	public PlayerFragment getPlayerFragment() {
 		return PlayerFragment;
+	}
+	public void sendToSettings() {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

@@ -179,7 +179,7 @@ public class Preferences implements SharedPreferences {
             return new String(pbeCipher.doFinal(bytes),UTF8);
 
         } catch( Exception e) {
-            throw new RuntimeException(e);
+            return null;
         }
     }
 

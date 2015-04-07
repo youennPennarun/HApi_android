@@ -36,7 +36,6 @@ public class AlarmsAdapter extends ArrayAdapter<Alarm> {
 
 	@Override
 	public View getView(final int position, View convertView, ViewGroup parent) {
-		System.out.println("update view...");
 		final LayoutInflater inflater = (LayoutInflater) context
 				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		final View rowView = inflater.inflate(R.layout.alarm_list, parent, false);

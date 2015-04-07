@@ -33,7 +33,7 @@
             android:layout_weight="90"
             android:adjustViewBounds="true"
             android:contentDescription="album cover"
-            android:src="@drawable/mercury" />
+            android:src="@drawable/album_default" />
 
         <GridLayout
             android:layout_width="wrap_content"

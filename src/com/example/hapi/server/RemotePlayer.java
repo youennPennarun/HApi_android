@@ -4,8 +4,11 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.widget.SeekBar;
+
 import com.example.hapi.PlayerControl;
 import com.example.hapi.PlayerFragment;
+import com.example.hapi.R;
 import com.github.nkzawa.emitter.Emitter;
 import com.github.nkzawa.socketio.client.Socket;
 
@@ -26,6 +29,7 @@ public class RemotePlayer {
 							@Override
 							public void run() {
 								playerFragment.setVolume(PlayerControl.getVolume());
+								((SeekBar)playerFragment.getRootView().findViewById(R.id.volumeBar)).setProgress(PlayerControl.getVolume());
 							}
 						});
 					}

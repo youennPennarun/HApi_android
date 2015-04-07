@@ -8,7 +8,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
@@ -60,6 +62,8 @@ public class AlarmFragment extends CustomFragment {
 	    ListView l = (ListView) rootView.findViewById(R.id.alarmList);
 		this.setListAdapter(new AlarmsAdapter(getActivity(), Alarm.getAlarms()));
 	    l.setAdapter(listAdapter);
+	    Alarm.loadingAlarmsLL = ((RelativeLayout)rootView.findViewById(R.id.loading_alarms));
+	    Alarm.loadingAlarmsLL.setVisibility(View.VISIBLE);
 		Alarm.loadAlarms((ArrayAdapter<Alarm>)listAdapter);
     }
 	public AlarmsAdapter getListAdapter() {
@@ -80,6 +84,9 @@ public class AlarmFragment extends CustomFragment {
 		return null;
 	}
 	public void loadData() {
+	    Alarm.loadingAlarmsLL = ((RelativeLayout)rootView.findViewById(R.id.loading_alarms));
+	    Alarm.loadingAlarmsLL.setVisibility(View.VISIBLE);
 		Alarm.loadAlarms(getListAdapter());
 	}
+	
 }

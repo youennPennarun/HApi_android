@@ -23,23 +23,26 @@ public class PlayerFragment extends CustomFragment {
 	private ViewGroup rootView;
 	protected View notSetView;
 	private Activity mActivity;
+	public PlayerFragment() {
+		this.mActivity = getActivity();
+	}
 	public PlayerFragment(Activity activity) {
 		this.mActivity = activity;
 	}
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
-		rootView = (ViewGroup) inflater.inflate(
-				R.layout.player, container, false);
+		setRootView((ViewGroup) inflater.inflate(
+				R.layout.player, container, false));
 		RemotePlayer.setPlayerFragment(this);
-		final TextView trackNameTV = (TextView) rootView.findViewById(R.id.trackName);
-		final TextView trackArtistTV = (TextView) rootView.findViewById(R.id.trackArtist);
+		final TextView trackNameTV = (TextView) getRootView().findViewById(R.id.trackName);
+		final TextView trackArtistTV = (TextView) getRootView().findViewById(R.id.trackArtist);
 
-		final ImageButton playButton = (ImageButton) rootView.findViewById(R.id.playButton);
-		final ImageButton pauseButton = (ImageButton) rootView.findViewById(R.id.pauseButton);
+		final ImageButton playButton = (ImageButton) getRootView().findViewById(R.id.playButton);
+		final ImageButton pauseButton = (ImageButton) getRootView().findViewById(R.id.pauseButton);
 
-		final Button searchArtistBtn = (Button) rootView.findViewById(R.id.searchArtist);
-		final Button playRandom = (Button) rootView.findViewById(R.id.playRandom);
+		final Button searchArtistBtn = (Button) getRootView().findViewById(R.id.searchArtist);
+		final Button playRandom = (Button) getRootView().findViewById(R.id.playRandom);
 
 		trackNameTV.setText(PlayerControl.getTrackName());
 		trackArtistTV.setText(PlayerControl.getTrackArtist());
@@ -60,7 +63,7 @@ public class PlayerFragment extends CustomFragment {
 				PlayerControl.pause();
 			}
 		});
-		final SeekBar volumeBar=(SeekBar) rootView.findViewById(R.id.volumeBar);     
+		final SeekBar volumeBar=(SeekBar) getRootView().findViewById(R.id.volumeBar);     
 		volumeBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
 			@Override
 			public void onStopTrackingTouch(SeekBar seekBar) {}
@@ -89,7 +92,7 @@ public class PlayerFragment extends CustomFragment {
 		} else {
 			setPiNotConnectedView();
 		}
-		return rootView;
+		return getRootView();
 	}
 	@Override
 	public void onAttach(Activity activity) {
@@ -104,7 +107,7 @@ public class PlayerFragment extends CustomFragment {
 			@Override
 			public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY){
 				if (distanceY > 5) {
-					rootView.setY(rootView.getY() - distanceY);
+					getRootView().setY(getRootView().getY() - distanceY);
 				}
 
 				return super.onScroll(e1, e2, distanceX, distanceY);	
@@ -128,13 +131,13 @@ public class PlayerFragment extends CustomFragment {
 			}
 		});
 
-		rootView.setOnTouchListener(new View.OnTouchListener() {
+		getRootView().setOnTouchListener(new View.OnTouchListener() {
 			@Override
 			public boolean onTouch(View v, MotionEvent event) {
 				boolean detectedUp = event.getAction() == MotionEvent.ACTION_UP;
 				if (!gesture.onTouchEvent(event) && detectedUp)
 				{
-					ObjectAnimator anim = ObjectAnimator.ofFloat(rootView, "translationY", rootView.getY(), 0);
+					ObjectAnimator anim = ObjectAnimator.ofFloat(getRootView(), "translationY", getRootView().getY(), 0);
 					anim.setDuration(100);
 					anim.start();
 				}
@@ -144,11 +147,11 @@ public class PlayerFragment extends CustomFragment {
 	}
 
 	public void setVolume(int value) {
-		((TextView)rootView.findViewById(R.id.volumeValue)).setText(String.valueOf(value));
+		((TextView)getRootView().findViewById(R.id.volumeValue)).setText(String.valueOf(value));
 	}
 	public void updateTrack() {
-		((TextView)rootView.findViewById(R.id.trackArtist)).setText(PlayerControl.getTrackArtist());
-		((TextView)rootView.findViewById(R.id.trackName)).setText(PlayerControl.getTrackName());
+		((TextView)getRootView().findViewById(R.id.trackArtist)).setText(PlayerControl.getTrackArtist());
+		((TextView)getRootView().findViewById(R.id.trackName)).setText(PlayerControl.getTrackName());
 	}
 	public void setPiNotConnectedView() {
 
@@ -157,10 +160,10 @@ public class PlayerFragment extends CustomFragment {
 				public void run() 
 				{
 					System.out.println(mActivity);
-					if(mActivity != null && LayoutInflater.from(mActivity) != null && rootView != null) {
+					if(mActivity != null && LayoutInflater.from(mActivity) != null && getRootView() != null) {
 						notSetView = LayoutInflater.from(mActivity).inflate(R.layout.pi_not_connected, null);
-						System.out.println(rootView);
-						rootView.addView(notSetView,
+						System.out.println(getRootView());
+						getRootView().addView(notSetView,
 								new ViewGroup.LayoutParams(
 										ViewGroup.LayoutParams.MATCH_PARENT,
 										ViewGroup.LayoutParams.MATCH_PARENT));
@@ -183,5 +186,11 @@ public class PlayerFragment extends CustomFragment {
 				}
 			});
 		}
+	}
+	public ViewGroup getRootView() {
+		return rootView;
+	}
+	public void setRootView(ViewGroup rootView) {
+		this.rootView = rootView;
 	}
 }

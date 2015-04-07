@@ -2,11 +2,16 @@ package com.example.hapi;
 
 import android.app.ActionBar;
 import android.app.FragmentManager;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.TaskStackBuilder;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -20,6 +25,7 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.example.hapi.data.Settings;
+import com.example.hapi.music.SearchMusicFragment;
 import com.example.hapi.server.ServerLink;
 import com.example.hapi.server.ServerLinkTask;
 import com.example.hapi.widgets.SimpleSideDrawer;
@@ -30,6 +36,11 @@ public class MainActivity extends FragmentActivity {
 	private SimpleSideDrawer mSlidingMenu;
 	private Fragment mainFragment = new AlarmFragment();
 	private PlayerFragment PlayerFragment = new PlayerFragment(this);
+	private int notificationID = 125;
+
+	private View actionBar;
+
+	private ImageButton actionBarSearch;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -44,7 +55,7 @@ public class MainActivity extends FragmentActivity {
 			getSupportFragmentManager().beginTransaction().add(R.id.app_main_frame, new SettingsFragment()).addToBackStack(null).commit();
 		} else {
 			task.execute(Settings.host);
-			getSupportFragmentManager().beginTransaction().add(R.id.app_main_frame, mainFragment).addToBackStack(null).commit();
+			getSupportFragmentManager().beginTransaction().add(R.id.app_main_frame, getMainFragment()).addToBackStack(null).commit();
 		}
 		mSlidingMenu = new SimpleSideDrawer( this );
 		mSlidingMenu.setLeftBehindContentView( R.layout.drawermenu_left );
@@ -58,12 +69,12 @@ public class MainActivity extends FragmentActivity {
 
 		LayoutInflater mInflater = LayoutInflater.from(this);
 
-		View mCustomView = mInflater.inflate(R.layout.actionbar, null);
-		TextView mTitleTextView = (TextView) mCustomView.findViewById(R.id.title_text);
+		actionBar = mInflater.inflate(R.layout.actionbar, null);
+		TextView mTitleTextView = (TextView) actionBar.findViewById(R.id.title_text);
 		mTitleTextView.setText("Alarms");
 
 	    hidePlayer();
-		ImageView homeBtn = (ImageView) mCustomView
+		ImageView homeBtn = (ImageView) actionBar
 				.findViewById(R.id.actionbar_home);
 		homeBtn.setOnClickListener(new OnClickListener() {
 			@Override
@@ -71,7 +82,7 @@ public class MainActivity extends FragmentActivity {
 				mSlidingMenu.toggleLeftDrawer();
 			}
 		});
-		ImageButton actionbar_player = (ImageButton) mCustomView
+		ImageButton actionbar_player = (ImageButton) actionBar
 				.findViewById(R.id.actionbar_player);
 		
 		actionbar_player.setOnClickListener(new OnClickListener() {
@@ -84,11 +95,21 @@ public class MainActivity extends FragmentActivity {
 				}
 			}
 		});
+		actionBarSearch = (ImageButton)actionBar.findViewById(R.id.actionbar_search);
+		actionBarSearch.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View view) {
+				if (PlayerFragment.isVisible()) {
+					hidePlayer();
+				}
+				changeFragment(new SearchMusicFragment());
+			}
+		});
 		LinearLayout menuGotoAlarm = ((LinearLayout)mSlidingMenu.getRootView().findViewById(R.id.menu_goto_alarms));
 		menuGotoAlarm.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				if(!mainFragment.getClass().equals(AlarmFragment.class)) {
+				if(!getMainFragment().getClass().equals(AlarmFragment.class)) {
 					changeFragment(new AlarmFragment());
 				}
 				if(!mSlidingMenu.isClosed()) {
@@ -100,7 +121,7 @@ public class MainActivity extends FragmentActivity {
 		menuGotoSettings.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				if(!mainFragment.getClass().equals(SettingsFragment.class)) {
+				if(!getMainFragment().getClass().equals(SettingsFragment.class)) {
 					changeFragment(new SettingsFragment());
 				}
 				if(!mSlidingMenu.isClosed()) {
@@ -108,7 +129,7 @@ public class MainActivity extends FragmentActivity {
 				}
 			}
 		});
-		mActionBar.setCustomView(mCustomView);
+		mActionBar.setCustomView(actionBar);
 		mActionBar.setDisplayShowCustomEnabled(true);
 		return super.onCreateOptionsMenu(menu);
 	}
@@ -116,7 +137,7 @@ public class MainActivity extends FragmentActivity {
 	public void changeFragment(CustomFragment fragment) {
 		hidePlayer();
 		setActionBarTitle(fragment.title);
-		mainFragment = fragment;
+		setMainFragment(fragment);
 		FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
 		transaction.replace(R.id.app_main_frame, fragment);
 		transaction.addToBackStack(null);
@@ -140,6 +161,7 @@ public class MainActivity extends FragmentActivity {
 			} else {
 				PlayerFragment.setPiNotConnectedView();
 			}
+			actionBarSearch.setVisibility(View.VISIBLE);
 		}
 	}
 	public void hidePlayer() {
@@ -156,6 +178,7 @@ public class MainActivity extends FragmentActivity {
 			} else {
 				PlayerFragment.setPiNotConnectedView();
 			}
+			actionBarSearch.setVisibility(View.GONE);
 		}
 	}
 	/*
@@ -201,7 +224,7 @@ public class MainActivity extends FragmentActivity {
 	}
 	
 	public void onConnectionSet() {
-		((AlarmFragment)mainFragment).loadData();
+		((AlarmFragment)getMainFragment()).loadData();
 	}
 	public PlayerFragment getPlayerFragment() {
 		return PlayerFragment;
@@ -209,6 +232,39 @@ public class MainActivity extends FragmentActivity {
 	public void sendToSettings() {
 		// TODO Auto-generated method stub
 		
+	}
+	public Fragment getMainFragment() {
+		return mainFragment;
+	}
+	public void setMainFragment(Fragment mainFragment) {
+		this.mainFragment = mainFragment;
+	}
+	public void notifPiDisconnected() {
+		System.out.println("notif");
+		NotificationCompat.Builder mBuilder =
+		        new NotificationCompat.Builder(this)
+		        .setSmallIcon(R.drawable.jupiter)
+		        .setContentTitle("HAPi Alert")
+		        .setContentText("Raspberry pi disconnected");
+		
+		Intent resultIntent = new Intent(this, MainActivity.class);
+		TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
+		stackBuilder.addParentStack(MainActivity.class);
+		stackBuilder.addNextIntent(resultIntent);
+		PendingIntent resultPendingIntent =
+		        stackBuilder.getPendingIntent(
+		            0,
+		            PendingIntent.FLAG_UPDATE_CURRENT
+		        );
+		mBuilder.setContentIntent(resultPendingIntent);
+		NotificationManager mNotificationManager =
+		    (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+	    mNotificationManager.notify(notificationID, mBuilder.build());
+	}
+	public void dismissPiNotif(){
+		NotificationManager mNotificationManager =
+			    (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+	    mNotificationManager.cancel(notificationID);
 	}
 
 }

@@ -37,7 +37,6 @@ public class SearchArtistAdapter extends ArrayAdapter<SearchArtist> {
 		final LayoutInflater inflater = (LayoutInflater) context
 				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		final View rowView = inflater.inflate(R.layout.search_artist_item, parent, false);
-		System.out.println("new artist");
 		if (values.get(position).imageUrls.size() > 0) {
 			new DownloadImageTask((ImageView) rowView.findViewById(R.id.artistImage))
 			.execute(values.get(position).imageUrls.get(0));
@@ -58,7 +57,7 @@ public class SearchArtistAdapter extends ArrayAdapter<SearchArtist> {
 			Bitmap mIcon11 = null;
 			BitmapFactory.Options options = new BitmapFactory.Options();
 			options.inPreferredConfig = Config.RGB_565;
-			options.inSampleSize = 6;
+			options.inSampleSize = 12;
 			try {
 				InputStream in = new java.net.URL(urldisplay).openStream();
 				mIcon11 = BitmapFactory.decodeStream(in, null, options);

@@ -38,7 +38,6 @@ public class Alarm implements Comparable{
 		this.setTime(strToDate(json.getString("time")));
 		this.setEnable(json.getBoolean("enable"));
 		this.repeat = json.getBoolean("repeat");
-		System.out.println("enable? " + this.isEnable());
 	}
 	public Alarm(String _id, Date date, boolean enable, boolean repeat) {
 		this.set_id(_id);
@@ -66,7 +65,6 @@ public class Alarm implements Comparable{
 	}
 	public static void loadAlarms() {
 		if (ServerLink.getSocket() != null) {
-			System.out.println("asking for alarm list");
 			ServerLink.getSocket().emit("alarm:get", new JSONObject());
 		}
 	}
@@ -88,7 +86,6 @@ public class Alarm implements Comparable{
 		socket.on("response:alarm:get", new Emitter.Listener() {
 			@Override
 			public void call(Object... args) {
-				System.out.println("got 'response:alarm:get'");
 				Alarm.alarms.clear();
 				Alarm alarm;
 				try {
@@ -97,10 +94,8 @@ public class Alarm implements Comparable{
 						for (int i = 0; i < data.length(); i++) {
 							alarm = new Alarm(data.getJSONObject(i));
 							getAlarms().add(alarm);
-							System.out.println("new "+alarm);
 						}
 						if (notify != null) {
-							System.out.println("size="+alarms.size());
 							Alarm.updateList();
 						}
 					}
@@ -118,9 +113,7 @@ public class Alarm implements Comparable{
 					if(args.length > 0) {
 						alarm = new Alarm(((JSONObject)args[0]).getJSONObject("alarm"));
 						alarms.add(alarm);
-						System.out.println("new Alarm");
 						if (notify != null) {
-							System.out.println("size="+alarms.size());
 							Alarm.updateList();
 						}
 					}
@@ -150,7 +143,6 @@ public class Alarm implements Comparable{
 									}
 								}
 								if (notify != null) {
-									System.out.println("size="+alarms.size());
 									Alarm.updateList();
 								}
 							}
@@ -165,7 +157,6 @@ public class Alarm implements Comparable{
 			@Override
 			public void call(Object... arg0) {
 				if(arg0.length > 0) {
-					System.out.println(arg0[0]);
 					JSONObject data = (JSONObject)arg0[0];
 					if(data.has("alarm")) {
 						JSONObject updated;
@@ -221,7 +212,6 @@ public class Alarm implements Comparable{
 		Date date = null;
 		try {
 			TimeZone tz = TimeZone.getTimeZone("UTC");
-			System.out.println(strDate);
 			DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
 			df.setTimeZone(tz);
 			date = df.parse(strDate);

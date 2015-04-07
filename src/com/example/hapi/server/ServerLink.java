@@ -14,7 +14,12 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.app.Activity;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
+import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.TaskStackBuilder;
 import android.widget.TextView;
 
 import com.example.hapi.MainActivity;
@@ -65,9 +70,11 @@ public class ServerLink {
 					if ((boolean) args[0]) {
 						activity.getPlayerFragment().setPiConnectedView();
 						piConnected = true;
+						activity.dismissPiNotif();
 					} else {
 						activity.getPlayerFragment().setPiNotConnectedView();
 						piConnected=false;
+						activity.notifPiDisconnected();
 					}
 				}
 			}
@@ -76,12 +83,15 @@ public class ServerLink {
 			public void call(Object... args) {
 				activity.getPlayerFragment().setPiNotConnectedView();
 				piConnected=false;
+				System.out.println("pi logged out");
+				activity.notifPiDisconnected();
 			}
 		}).on("pi:logged-in", new Emitter.Listener() {
 			@Override
 			public void call(Object... args) {
 				activity.getPlayerFragment().setPiConnectedView();
 				piConnected = true;
+				activity.dismissPiNotif();
 			}
 		}).on(Socket.EVENT_DISCONNECT, new Emitter.Listener() {
 			@Override

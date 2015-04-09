@@ -50,7 +50,6 @@ public class SearchArtist {
 		try {
 			query.put("artist", queryStr);
 			data.put("query", query);
-			System.out.println("search:"+queryStr);
 			ServerLink.getSocket().emit("music:search", data);
 			return true;
 		} catch (JSONException e) {
@@ -65,7 +64,6 @@ public class SearchArtist {
 		try {
 			query.put("artist", queryStr);
 			data.put("query", query);
-			System.out.println("search:"+queryStr);
 			ServerLink.getSocket().emit("music:search", data, ack);
 			return true;
 		} catch (JSONException e) {

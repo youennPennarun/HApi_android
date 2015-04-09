@@ -28,6 +28,27 @@
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/menu_goto_playlist"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent" >
+
+            <ImageButton
+                android:id="@+id/actionbar_playlist_img"
+                android:background="@null"
+              	android:layout_height="30dp"
+              	android:layout_width="30dp"
+              	android:scaleType="fitXY"
+                android:src="@drawable/alarm" />
+
+            <TextView
+                android:id="@+id/menu_text_playlist"
+                style="@style/behindMenuItemTitle"
+                android:layout_height="wrap_content"
+                android:text="Playlists" />
+
+        </LinearLayout>
+
+        <LinearLayout
             android:id="@+id/menu_goto_settings"
             android:layout_width="wrap_content"
             android:layout_height="match_parent" >

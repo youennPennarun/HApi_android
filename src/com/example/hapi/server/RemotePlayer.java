@@ -20,18 +20,20 @@ public class RemotePlayer {
 			public void call(Object... args) {
 				String trackArtists = "";
 				int i = 0;
-				System.out.println(args[0]);
 				try {
-					int volume= ((JSONObject)args[0]).getJSONArray("volume").getInt(0);
-					PlayerControl.setVolume(volume-50);	
-					if (playerFragment != null) {
-						ServerLink.activity.runOnUiThread(new Runnable() {
-							@Override
-							public void run() {
-								playerFragment.setVolume(PlayerControl.getVolume());
-								((SeekBar)playerFragment.getRootView().findViewById(R.id.volumeBar)).setProgress(PlayerControl.getVolume());
-							}
-						});
+					System.out.println("got vol?" + args[0]);
+					if(((JSONObject)args[0]).has("volume")) {
+						int volume= ((JSONObject)args[0]).getJSONArray("volume").getInt(0);
+						PlayerControl.setVolume(volume-50);	
+						if (playerFragment != null) {
+							ServerLink.activity.runOnUiThread(new Runnable() {
+								@Override
+								public void run() {
+									playerFragment.setVolume(PlayerControl.getVolume());
+									((SeekBar)playerFragment.getRootView().findViewById(R.id.volumeBar)).setProgress(PlayerControl.getVolume());
+								}
+							});
+						}
 					}
 
 				} catch (JSONException e) {
@@ -40,14 +42,32 @@ public class RemotePlayer {
 				}
 
 			}
+		}).on("pi:player:status", new Emitter.Listener() {
+			@Override
+			public void call(Object... args) {
+				String status = null;
+				System.out.println(args[0]);
+				try {
+					JSONObject data = ((JSONObject)args[0]);
+					if(data.has("status")) {
+						status = data.getString("status");
+						System.out.println("player set to status "+status);
+						PlayerControl.setStatus(status);
+					}
+				} catch (JSONException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+
+			}
+
 		}).on("music:playing", new Emitter.Listener() {
 			@Override
 			public void call(Object... args) {
 				String trackArtists = "";
+				String trackTitle = "";
 				int i = 0;
-				System.out.println(args[0]);
 				try {
-					System.out.println("trackData="+args[0]);
 					JSONObject track = ((JSONObject)args[0]).getJSONObject("track");
 					if(track.has("artist")) {
 						JSONArray artistsArray = track.getJSONArray("artist");
@@ -58,20 +78,10 @@ public class RemotePlayer {
 						trackArtists = "";
 					}
 					PlayerControl.setTrackArtist(trackArtists);
-
 					if(track.has("name")) {
-						PlayerControl.setTrackName(track.getString("name"));
-					} else {
-						PlayerControl.setTrackName("");
+						trackTitle = track.getString("name");
 					}
-					if (playerFragment != null) {
-						ServerLink.activity.runOnUiThread(new Runnable() {
-							@Override
-							public void run() {
-								playerFragment.updateTrack();
-							}
-						});
-					}
+					PlayerControl.setPlayingTrackData(trackArtists, trackTitle);
 				} catch (JSONException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();

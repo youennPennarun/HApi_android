@@ -63,7 +63,6 @@ public class Artist {
 			}
 			JSONArray topTrackJSON = jsonObject.getJSONArray("top_tracks");
 			for(i = 0; i < topTrackJSON.length(); i++) {
-				System.out.println(topTrackJSON.getJSONObject(i).toString());
 				topTracks.add(Track.spotifyResultToTrack(topTrackJSON.getJSONObject(i)));
 			}
 			JSONArray albumsJSON = jsonObject.getJSONArray("albums");

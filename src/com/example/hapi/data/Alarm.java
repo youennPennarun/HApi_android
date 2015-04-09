@@ -94,6 +94,9 @@ public class Alarm implements Comparable{
 						for (int i = 0; i < data.length(); i++) {
 							alarm = new Alarm(data.getJSONObject(i));
 							getAlarms().add(alarm);
+							if (notify != null) {
+								Alarm.updateList();
+							}
 						}
 						if (notify != null) {
 							Alarm.updateList();

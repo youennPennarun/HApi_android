@@ -128,7 +128,6 @@ public class ServerLinkTask extends AsyncTask<String, String, Void> {
 					}
 				} else if(data.has("token")) {
 					String token = data.getString("token");
-					System.out.println("token="+token);
 
 					//TextView t=(TextView)mainActivity.findViewById(R.id.connectionStatus); 
 					if (ServerLink.connect(url, token)) {

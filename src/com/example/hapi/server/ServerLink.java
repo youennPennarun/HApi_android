@@ -66,7 +66,6 @@ public class ServerLink {
 			@Override
 			public void call(Object... args) {
 				if(args.length > 0) {
-					System.out.println(args[0]);
 					if ((boolean) args[0]) {
 						activity.getPlayerFragment().setPiConnectedView();
 						piConnected = true;

@@ -5,7 +5,7 @@
     android:versionName="1.0" >
 
     <uses-sdk
-        android:minSdkVersion="15"
+        android:minSdkVersion="16"
         android:targetSdkVersion="21" />
 
     <application
@@ -22,8 +22,24 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".SettingsActivity"></activity>
-        <activity android:name=".music.MusicActivity"></activity>
+        <activity android:name=".SettingsActivity" >
+        </activity>
+        <activity android:name=".music.MusicActivity" >
+        </activity>
+
+        <receiver
+            android:name="com.example.hapi.NotificationActivity"
+            android:enabled="true"
+            android:exported="true" >
+            <intent-filter>
+                <action android:name="android.intent.action.PLAYER_PLAY" />
+                <action android:name="android.intent.action.PLAYER_PAUSE" />
+                <action android:name="android.intent.action.PLAYER_PREVIOUS" />
+                <action android:name="android.intent.action.PLAYER_NEXT" />
+            </intent-filter>
+        </receiver>
     </application>
-	<uses-permission android:name="android.permission.INTERNET" /> 
+
+    <uses-permission android:name="android.permission.INTERNET" />
+
 </manifest>

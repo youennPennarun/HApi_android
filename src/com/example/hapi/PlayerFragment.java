@@ -2,8 +2,12 @@ package com.example.hapi;
 
 import android.animation.ObjectAnimator;
 import android.app.Activity;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.NotificationCompat;
 import android.view.GestureDetector;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -11,6 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.RemoteViews;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
@@ -23,6 +28,8 @@ public class PlayerFragment extends CustomFragment {
 	private ViewGroup rootView;
 	protected View notSetView;
 	private Activity mActivity;
+	private final int PLAYER_NOTIF_ID = 1;
+	private RemoteViews playerRemoteViews;
 	public PlayerFragment() {
 		this.mActivity = getActivity();
 	}
@@ -35,6 +42,7 @@ public class PlayerFragment extends CustomFragment {
 		setRootView((ViewGroup) inflater.inflate(
 				R.layout.player, container, false));
 		RemotePlayer.setPlayerFragment(this);
+		PlayerControl.setPlayerFragment(this);
 		final TextView trackNameTV = (TextView) getRootView().findViewById(R.id.trackName);
 		final TextView trackArtistTV = (TextView) getRootView().findViewById(R.id.trackArtist);
 
@@ -56,7 +64,6 @@ public class PlayerFragment extends CustomFragment {
 		});
 		playButton.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
-				System.out.println("play...");
 				PlayerControl.play();
 			}
 		});
@@ -165,8 +172,10 @@ public class PlayerFragment extends CustomFragment {
 		((TextView)getRootView().findViewById(R.id.volumeValue)).setText(String.valueOf(value));
 	}
 	public void updateTrack() {
-		((TextView)getRootView().findViewById(R.id.trackArtist)).setText(PlayerControl.getTrackArtist());
-		((TextView)getRootView().findViewById(R.id.trackName)).setText(PlayerControl.getTrackName());
+		if(getRootView() != null) {
+			((TextView)getRootView().findViewById(R.id.trackArtist)).setText(PlayerControl.getTrackArtist());
+			((TextView)getRootView().findViewById(R.id.trackName)).setText(PlayerControl.getTrackName());
+		}
 	}
 	public void setPiNotConnectedView() {
 
@@ -174,10 +183,8 @@ public class PlayerFragment extends CustomFragment {
 			getActivity().runOnUiThread(new Runnable()  {
 				public void run() 
 				{
-					System.out.println(mActivity);
 					if(mActivity != null && LayoutInflater.from(mActivity) != null && getRootView() != null) {
 						notSetView = LayoutInflater.from(mActivity).inflate(R.layout.pi_not_connected, null);
-						System.out.println(getRootView());
 						getRootView().addView(notSetView,
 								new ViewGroup.LayoutParams(
 										ViewGroup.LayoutParams.MATCH_PARENT,
@@ -207,5 +214,69 @@ public class PlayerFragment extends CustomFragment {
 	}
 	public void setRootView(ViewGroup rootView) {
 		this.rootView = rootView;
+	}
+	public void playerNotif() {
+		NotificationManager mNotificationManager = (NotificationManager) mActivity.getSystemService(Context.NOTIFICATION_SERVICE);  
+		playerRemoteViews = new RemoteViews(mActivity.getPackageName(),  
+				R.layout.player_notification);
+		playerRemoteViews.setTextViewText(R.id.player_notif_trackName, PlayerControl.getTrackName());
+		playerRemoteViews.setTextViewText(R.id.player_notif_artist, PlayerControl.getTrackArtist());
+
+		Intent openAppReveive = new Intent(mActivity, MainActivity.class);
+		openAppReveive.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | 
+				Intent.FLAG_ACTIVITY_SINGLE_TOP | 
+				Intent.FLAG_ACTIVITY_NEW_TASK);
+		openAppReveive.setAction(MainActivity.ACTION_PLAYER_SHOW);
+		PendingIntent pendingIntentShow=PendingIntent.getActivity(mActivity,0,openAppReveive, 0);
+		playerRemoteViews.setOnClickPendingIntent(R.id.player_notif_cover, pendingIntentShow);
+		playerRemoteViews.setOnClickPendingIntent(R.id.player_notif_trackData, pendingIntentShow);
+		Intent playReceive = new Intent(mActivity, NotificationActivity.class);  
+		playReceive.setAction(NotificationActivity.PLAYER_PLAY);
+		PendingIntent pendingIntentPlay=PendingIntent.getBroadcast(mActivity,0,playReceive,0);
+		playerRemoteViews.setOnClickPendingIntent(R.id.player_notif_play, pendingIntentPlay);
+		Intent pauseReceive = new Intent(mActivity, NotificationActivity.class);  
+		pauseReceive.setAction(NotificationActivity.PLAYER_PAUSE);
+		PendingIntent pendingIntentPause = PendingIntent.getBroadcast(mActivity, 12345, pauseReceive, PendingIntent.FLAG_UPDATE_CURRENT);
+		playerRemoteViews.setOnClickPendingIntent(R.id.player_notif_pause, pendingIntentPause);
+		Intent nextReceive = new Intent(mActivity, NotificationActivity.class); 
+		nextReceive.setAction(NotificationActivity.PLAYER_NEXT);
+		PendingIntent pendingIntentNext = PendingIntent.getBroadcast(mActivity, 12345, nextReceive, PendingIntent.FLAG_UPDATE_CURRENT);
+		playerRemoteViews.setOnClickPendingIntent(R.id.player_notif_next, pendingIntentNext);
+		Intent previousReceive = new Intent(mActivity, NotificationActivity.class); 
+		previousReceive.setAction(NotificationActivity.PLAYER_PREVIOUS);
+		PendingIntent pendingIntentPrevious = PendingIntent.getBroadcast(mActivity, 12345, previousReceive, PendingIntent.FLAG_UPDATE_CURRENT);
+		playerRemoteViews.setOnClickPendingIntent(R.id.player_notif_previous, pendingIntentPrevious);
+
+		NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(  
+				mActivity).setSmallIcon(R.drawable.ic_launcher).setContent(  
+						playerRemoteViews);
+		mNotificationManager.notify(PLAYER_NOTIF_ID, mBuilder.build());
+		playerStatusChanged();
+	}
+
+	public void dismissPlayerNotif() {
+		try {
+			NotificationManager mNotificationManager =
+					(NotificationManager) mActivity.getSystemService(Context.NOTIFICATION_SERVICE);
+			mNotificationManager.cancel(PLAYER_NOTIF_ID);
+		} catch(NullPointerException e) {
+
+		}
+	}
+	public void playerStatusChanged() {
+		if(playerRemoteViews != null) {
+			if (PlayerControl.getStatus().equals("PLAY")) {
+				playerRemoteViews.setViewVisibility(R.id.player_notif_play, View.GONE);
+				playerRemoteViews.setViewVisibility(R.id.player_notif_pause, View.VISIBLE);
+			} else if (PlayerControl.getStatus().equals("PAUSE")) {
+				playerRemoteViews.setViewVisibility(R.id.player_notif_play, View.VISIBLE);
+				playerRemoteViews.setViewVisibility(R.id.player_notif_pause, View.GONE);
+			}
+			NotificationManager mNotificationManager = (NotificationManager) mActivity.getSystemService(Context.NOTIFICATION_SERVICE); 
+			NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(  
+					mActivity).setSmallIcon(R.drawable.ic_launcher).setContent(  
+							playerRemoteViews);
+			mNotificationManager.notify(PLAYER_NOTIF_ID, mBuilder.build());
+		}
 	}
 }

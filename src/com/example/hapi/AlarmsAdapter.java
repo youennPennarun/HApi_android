@@ -3,6 +3,7 @@ package com.example.hapi;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
+import java.util.ConcurrentModificationException;
 import java.util.GregorianCalendar;
 
 import android.animation.Animator;
@@ -57,7 +58,7 @@ public class AlarmsAdapter extends ArrayAdapter<Alarm> {
 			alarmHeaderLayout.setBackgroundResource(R.color.alarm_disable);
 
 		}
-		
+
 		LinearLayout alarmDetails = (LinearLayout)rowView.findViewById(R.id.alarmDetailsContent);
 		CheckBox alarmEnabled = (CheckBox)rowView.findViewById(R.id.alarmEnabled);
 		alarmEnabled.setChecked(values.get(position).isEnable());
@@ -66,7 +67,6 @@ public class AlarmsAdapter extends ArrayAdapter<Alarm> {
 		alarmItem.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				System.out.println("inflate");
 				LinearLayout alarmDetails = (LinearLayout)rowView.findViewById(R.id.alarmDetailsContent);
 				if (alarmDetails.getVisibility() == View.VISIBLE) {
 					collapse(rowView,alarmDetails);
@@ -96,7 +96,7 @@ public class AlarmsAdapter extends ArrayAdapter<Alarm> {
 	private void expand(View rowView, LinearLayout layout) {
 		//set Visible
 		rotateArrow(rowView, 0f, 90f);
-		
+
 		layout.setVisibility(View.VISIBLE);
 
 		final int widthSpec = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
@@ -153,9 +153,12 @@ public class AlarmsAdapter extends ArrayAdapter<Alarm> {
 		anim.setFillAfter(true);
 		arrow.startAnimation(anim);
 	}
+	@SuppressWarnings("unchecked")
 	@Override
 	public void notifyDataSetChanged(){
-		Collections.sort(values);
+		try {
+			Collections.sort(values);
+		} catch(ConcurrentModificationException e) {}
 		super.notifyDataSetChanged();
 	}
 

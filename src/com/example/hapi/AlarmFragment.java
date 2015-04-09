@@ -27,7 +27,6 @@ public class AlarmFragment extends CustomFragment {
             Bundle savedInstanceState) {
         this.rootView = (ViewGroup) inflater.inflate(
                 R.layout.alarms, container, false);
-        System.out.println("geting alarms:!::!");
         updateAlarmList();
         Alarm.setAlarmFragment(this);
         title = "Alarms";
@@ -56,12 +55,18 @@ public class AlarmFragment extends CustomFragment {
 				});
 			}
 		});
-        return rootView;
-    }
-    public void updateAlarmList() {
+        System.out.println("---------------------------------------------");
+        for (Alarm a : Alarm.getAlarms()) {
+        	System.out.println(a);
+        }
+        System.out.println("---------------------------------------------");
 	    ListView l = (ListView) rootView.findViewById(R.id.alarmList);
 		this.setListAdapter(new AlarmsAdapter(getActivity(), Alarm.getAlarms()));
 	    l.setAdapter(listAdapter);
+		getListAdapter().notifyDataSetChanged();
+        return rootView;
+    }
+    public void updateAlarmList() {
 	    Alarm.loadingAlarmsLL = ((RelativeLayout)rootView.findViewById(R.id.loading_alarms));
 	    Alarm.loadingAlarmsLL.setVisibility(View.VISIBLE);
 		Alarm.loadAlarms((ArrayAdapter<Alarm>)listAdapter);
@@ -84,6 +89,7 @@ public class AlarmFragment extends CustomFragment {
 		return null;
 	}
 	public void loadData() {
+		getListAdapter().notifyDataSetChanged();
 	    Alarm.loadingAlarmsLL = ((RelativeLayout)rootView.findViewById(R.id.loading_alarms));
 	    Alarm.loadingAlarmsLL.setVisibility(View.VISIBLE);
 		Alarm.loadAlarms(getListAdapter());

@@ -1,5 +1,0 @@
-/home/nolitsou/workspace/hapi/build/intermediates/classes/debug
-/home/nolitsou/workspace/hapi/build/intermediates/pre-dexed/debug/socket.io-client-0.4.2-53014261dbb27213bebc1d3c760280e09daca20f.jar
-/home/nolitsou/workspace/hapi/build/intermediates/pre-dexed/debug/engine.io-client-0.4.1-ec8bd85502a5574952e5329548c79a52dc6fa0db.jar
-/home/nolitsou/workspace/hapi/build/intermediates/pre-dexed/debug/Java-WebSocket-1.3.0-a2e6dac4eb77918bd9075c217ec3d048b03b098a.jar
-/home/nolitsou/workspace/hapi/build/intermediates/pre-dexed/debug/android-support-v4-8d6a17445bcb3e1dc6ff61e8c359bf642b9807c0.jar

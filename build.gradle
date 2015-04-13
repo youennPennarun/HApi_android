@@ -1,59 +1,19 @@
+// Top-level build file where you can add configuration options common to all sub-projects/modules.
+
 buildscript {
     repositories {
-        mavenCentral() // or jCenter()
+        jcenter()
     }
-
     dependencies {
-        classpath 'com.android.tools.build:gradle:1.0.1'
+        classpath 'com.android.tools.build:gradle:1.1.0'
+
+        // NOTE: Do not place your application dependencies here; they belong
+        // in the individual module build.gradle files
     }
 }
 
-apply plugin: 'com.android.application'
-repositories {
-  mavenCentral()
-}
-
-android {
-    compileSdkVersion 17
-    
-     sourceSets {
-        main {
-            manifest.srcFile 'AndroidManifest.xml'
-            java.srcDirs = ['src']
-            resources.srcDirs = ['src']
-            aidl.srcDirs = ['src']
-            renderscript.srcDirs = ['src']
-            res.srcDirs = ['res']
-            assets.srcDirs = ['assets']
-        }
-
-        instrumentTest.setRoot('tests')
+allprojects {
+    repositories {
+        jcenter()
     }
-}
-
-android {
-    buildToolsVersion "21.1.2"
-    compileSdkVersion 21
-    
-     sourceSets {
-        main {
-            manifest.srcFile 'AndroidManifest.xml'
-            java.srcDirs = ['src', '/hapi/gen']
-            resources.srcDirs = ['src']
-            aidl.srcDirs = ['src']
-            renderscript.srcDirs = ['src']
-            res.srcDirs = ['res']
-            assets.srcDirs = ['assets']
-        }
-
-        instrumentTest.setRoot('tests')
-    }
-} 
-repositories {
-	mavenCentral() // or jCenter()
-}
-dependencies {
-	compile fileTree(dir: 'libs', include: '*.jar')
-    compile 'com.github.nkzawa:socket.io-client:0.4.2'
-    compile 'com.github.manuelpeinado.fadingactionbar:fadingactionbar:3.1.2'
 }

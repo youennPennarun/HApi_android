@@ -3,9 +3,9 @@ package com.example.nolitsou.hapi;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.example.nolitsou.hapi.music.Album;
 import com.example.nolitsou.hapi.music.PlayerContainer;
 import com.example.nolitsou.hapi.music.Track;
+import com.example.nolitsou.hapi.music.data.Album;
 import com.example.nolitsou.hapi.music.playlist.Playlist;
 import com.example.nolitsou.hapi.server.SocketService;
 import com.github.nkzawa.emitter.Emitter;
@@ -33,6 +33,10 @@ public class PlayerControl {
 
     public PlayerControl(SocketService socketService) {
         this.socketService = socketService;
+    }
+
+    public static void setPlayer(PlayerContainer player) {
+
     }
 
     public void play() {
@@ -154,7 +158,7 @@ public class PlayerControl {
 
     public void setStatus(String status) {
         this.status = status;
-        System.out.println("got status : "+status);
+        System.out.println("got status : " + status);
         PlayerNotification.create(socketService);
         socketService.broadcast(TRACK_STATUS);
 
@@ -163,6 +167,7 @@ public class PlayerControl {
     public void setPlaylist(ArrayList<Track> playlist) {
         this.playlist = playlist;
     }
+
     public void setPlaylist(ArrayList<Track> playlist, int idPlaying) {
         this.playlist = playlist;
         this.idPlaying = idPlaying;
@@ -170,6 +175,7 @@ public class PlayerControl {
     }
 
     public void setPlaying() {
+        System.out.println("idPlaying = "+idPlaying +" playlist size = "+playlist.size());
         if (idPlaying > -1 && idPlaying < playlist.size()) {
             playing = this.playlist.get(idPlaying);
             System.out.println(this.playlist.get(idPlaying).getName());
@@ -251,6 +257,7 @@ public class PlayerControl {
             public void call(Object... arg0) {
                 if (arg0.length > 0) {
                     System.out.println();
+                    System.out.println(arg0[0]);
                     JSONObject response = ((JSONObject) arg0[0]);
                     JSONArray playlistJson;
                     try {
@@ -271,7 +278,8 @@ public class PlayerControl {
             @Override
             public void call(Object... arg0) {
                 if (arg0.length > 0) {
-                    System.out.println();
+                    System.out.println(arg0[0]);
+
                     JSONObject response = ((JSONObject) arg0[0]);
                     try {
                         ArrayList<Track> playlist = new ArrayList<Track>();
@@ -285,7 +293,7 @@ public class PlayerControl {
                             JSONObject trackJson = response.getJSONObject("track");
                             playlist.add(Track.jsonToTrack(trackJson));
                         }
-                        setPlaylist(playlist);
+                        setPlaylist(playlist, 0);
                     } catch (JSONException e) {
                         // TODO Auto-generated catch block
                         e.printStackTrace();
@@ -294,9 +302,5 @@ public class PlayerControl {
 
             }
         });
-    }
-
-    public static void setPlayer(PlayerContainer player) {
-
     }
 }

@@ -11,6 +11,9 @@
     android:layout_height="fill_parent"
     android:background="#ffffff"
     android:longClickable="true" >
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent">
 
     <ImageView
         android:id="@+id/player_cover"
@@ -41,7 +44,7 @@
             android:layout_weight="1" >
 
             <ImageButton
-                android:id="@+id/player_random"
+                android:id="@+id/showVolume"
                 style="?android:attr/borderlessButtonStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -82,7 +85,7 @@
                 android:text="@string/next_label" />
 
             <ImageButton
-                android:id="@+id/showVolume"
+                android:id="@+id/player_random"
                 style="?android:attr/borderlessButtonStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -204,5 +207,5 @@
         </LinearLayout>
 
     </LinearLayout>
-
+    </RelativeLayout>
 </com.example.nolitsou.hapi.music.PlayerContainer>

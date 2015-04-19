@@ -33,7 +33,7 @@ public enum SocketConnectionEnum {
 
     @Override
     public String toString() {
-        return "(" +code + "): " + msg;
+        return "(" + code + "): " + msg;
     }
 
 }

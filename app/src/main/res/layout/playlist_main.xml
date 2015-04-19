@@ -1,0 +1,55 @@
+<com.sothree.slidinguppanel.SlidingUpPanelLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:sothree="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/app_main_frame"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="#e9e9e9"
+    android:clipChildren="false"
+    android:gravity="bottom"
+    sothree:umanoOverlay="true"
+    sothree:umanoPanelHeight="@dimen/playerHead_height"
+    sothree:umanoShadowHeight="4dp"
+    sothree:umanoParalaxOffset="100dp" >
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical" >
+
+        <include
+            android:id="@+id/app_frame_actionBar"
+            android:layout_width="fill_parent"
+            android:layout_height="@dimen/actionBar_height"
+            android:layout_alignParentTop="true"
+            layout="@layout/actionbar"
+            android:clipChildren="false" />
+
+        <com.example.nolitsou.hapi.music.playlist.PlaylistContainer
+            android:id="@+id/playlists"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="0dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
+            android:orientation="vertical"
+            android:layout_below="@+id/app_frame_actionBar">
+
+            <ListView
+                android:id="@+id/playlist_list"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" >
+            </ListView>
+
+        </com.example.nolitsou.hapi.music.playlist.PlaylistContainer>
+    </RelativeLayout>
+
+    <include
+        layout="@layout/player"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentBottom="true"
+        android:clipChildren="false" >
+    </include>
+
+</com.sothree.slidinguppanel.SlidingUpPanelLayout>

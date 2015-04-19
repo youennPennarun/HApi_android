@@ -1,4 +1,6 @@
-package com.example.nolitsou.hapi.music;
+package com.example.nolitsou.hapi.music.data;
+
+import com.example.nolitsou.hapi.music.Track;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -9,7 +11,7 @@ import java.util.ArrayList;
 public class Album {
     private String name;
     private String spotify_id;
-    private String type;
+    private String album_type;
     private ArrayList<Track> tracks = null;
     private String spotify_uri;
     private ArrayList<String> imageUrls;
@@ -21,10 +23,10 @@ public class Album {
         this.tracks = tracks;
     }
 
-    public Album(String name, String type, ArrayList<String> imageUrls, String spotify_id, String spotify_uri) {
+    public Album(String name, String album_type, ArrayList<String> imageUrls, String spotify_id, String spotify_uri) {
         this.name = name;
         this.setImageUrls(imageUrls);
-        this.type = type;
+        this.album_type = album_type;
         this.spotify_id = spotify_id;
         this.spotify_uri = spotify_uri;
     }
@@ -44,7 +46,7 @@ public class Album {
     public static Album jsonToAlbum(JSONObject json) {
         try {
             String name = json.getString("name");
-            String type = json.getString("type");
+            String album_type = json.getString("album_type");
             JSONArray imagesJson = json.getJSONArray("images");
             ArrayList<String> imageUrls = new ArrayList<String>();
             for (int i = 0; i < imagesJson.length(); i++) {
@@ -53,7 +55,7 @@ public class Album {
             JSONObject spotifyData = json.getJSONObject("spotifyData");
             String spotify_id = spotifyData.getString("id");
             String spotify_uri = spotifyData.getString("uri");
-            return new Album(name, type, imageUrls, spotify_id, spotify_uri);
+            return new Album(name, album_type, imageUrls, spotify_id, spotify_uri);
         } catch (JSONException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();

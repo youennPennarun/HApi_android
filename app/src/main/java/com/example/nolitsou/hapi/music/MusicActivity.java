@@ -1,6 +1,5 @@
 package com.example.nolitsou.hapi.music;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -9,9 +8,6 @@ import android.view.MenuItem;
 import android.view.View;
 
 import com.example.nolitsou.hapi.R;
-import com.example.nolitsou.hapi.data.Settings;
-
-import java.util.ArrayList;
 
 public class MusicActivity extends FragmentActivity {
     protected View notSetView;
@@ -21,6 +17,7 @@ public class MusicActivity extends FragmentActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        /*
         setContentView(R.layout.music);
         Intent intent = getIntent();
         String args = intent.getStringExtra("searchQuery");
@@ -32,10 +29,11 @@ public class MusicActivity extends FragmentActivity {
             bundle.putString("searchQuery", args);
             searchMusicFragment.setArguments(bundle);
         }
-        //ServerLink.setMainActivity(this);
+        //ServerLink.setAbstractActivity(this);
         Settings.loadSettings(this);
 
         getSupportFragmentManager().beginTransaction().add(R.id.music_frame, searchMusicFragment).addToBackStack(null).commit();
+        */
     }
 
     public void changeFragment(Fragment fragment) {

@@ -1,6 +1,7 @@
 package com.example.nolitsou.hapi.music;
 
 import android.app.Activity;
+import android.app.Fragment;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,8 +13,7 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.example.nolitsou.hapi.CustomFragment;
-import com.example.nolitsou.hapi.MainActivity;
+import com.example.nolitsou.hapi.AbstractActivity;
 import com.example.nolitsou.hapi.R;
 import com.example.nolitsou.hapi.SearchArtistAdapter;
 import com.github.nkzawa.socketio.client.Ack;
@@ -22,11 +22,11 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
-public class SearchMusicFragment extends CustomFragment {
+public class SearchMusicFragment extends Fragment {
     private ViewGroup rootView;
     private ListView listView;
     private ArrayList<SearchArtist> results = new ArrayList<SearchArtist>();
-    private MainActivity activity;
+    private AbstractActivity activity;
     private String searchQuery;
 
     public SearchMusicFragment(String searchQuery) {
@@ -41,7 +41,7 @@ public class SearchMusicFragment extends CustomFragment {
                              Bundle savedInstanceState) {
         rootView = (ViewGroup) inflater.inflate(
                 R.layout.search_music, container, false);
-        this.activity = (MainActivity) getActivity();
+        this.activity = (AbstractActivity) getActivity();
         final TextView searchQueryTV = (TextView) rootView.findViewById(R.id.searchQuery);
         ImageView searchBtn = (ImageView) rootView.findViewById(R.id.searchBtn);
         this.listView = (ListView) rootView.findViewById(R.id.artistSearchList);
@@ -51,7 +51,7 @@ public class SearchMusicFragment extends CustomFragment {
             public void onItemClick(AdapterView<?> parent, View view, int position,
                                     long id) {
                 SearchArtist clicked = ((SearchArtist) listView.getItemAtPosition(position));
-                activity.changeFragment(new ArtistDetailFragment(clicked.artistId));
+                //activity.changeFragment(new ArtistDetailFragment(clicked.artistId));
             }
         });
         if (searchQuery != null) {
@@ -81,11 +81,6 @@ public class SearchMusicFragment extends CustomFragment {
         });
     }
 
-    @Override
-    public void loadData() {
-        // TODO Auto-generated method stub
-
-    }
 
     private class SearchArtistAck implements Ack {
 

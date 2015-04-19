@@ -45,13 +45,13 @@ public class PlayerNotification {
             });
         }
 
-        Intent openAppReveive = new Intent(socketService, MainActivity.class);
+        Intent openAppReveive = new Intent(socketService, AbstractActivity.class);
         openAppReveive.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP |
                 Intent.FLAG_ACTIVITY_SINGLE_TOP |
                 Intent.FLAG_ACTIVITY_NEW_TASK);
 
-        openAppReveive.setAction(MainActivity.ACTION_PLAYER_SHOW);
-        openAppReveive.putExtra("action", MainActivity.ACTION_PLAYER_SHOW);
+        openAppReveive.setAction(AbstractActivity.ACTION_PLAYER_SHOW);
+        openAppReveive.putExtra("action", AbstractActivity.ACTION_PLAYER_SHOW);
         PendingIntent pendingIntentShow = PendingIntent.getActivity(socketService, 0, openAppReveive, 0);
         playerRemoteViews.setOnClickPendingIntent(R.id.player_notif_cover, pendingIntentShow);
         playerRemoteViews.setOnClickPendingIntent(R.id.player_notif_trackData, pendingIntentShow);
@@ -110,7 +110,6 @@ public class PlayerNotification {
             mNotificationManager.notify(PLAYER_NOTIF_ID, mBuilder.build());
         }
     }
-
 
 
 }

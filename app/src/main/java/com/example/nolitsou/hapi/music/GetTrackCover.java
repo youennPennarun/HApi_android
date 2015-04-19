@@ -9,8 +9,8 @@ import com.github.nkzawa.socketio.client.Ack;
 
 public class GetTrackCover extends LoadImageTask {
 
-    private Ack ack;
     public Track track;
+    private Ack ack;
 
     public GetTrackCover(Context activity, Track track, Ack ack) {
         super(activity, track.getAlbum().getImageUrls().get(0));

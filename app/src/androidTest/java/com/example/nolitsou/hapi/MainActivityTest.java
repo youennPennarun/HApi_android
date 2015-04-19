@@ -2,7 +2,7 @@ package com.example.nolitsou.hapi;
 
 import android.test.ActivityInstrumentationTestCase2;
 
-import com.example.nolitsou.hapi.MainActivity;
+import com.example.nolitsou.hapi.AbstractActivity;
 import com.example.nolitsou.hapi.data.Settings;
 import com.example.nolitsou.hapi.server.SocketService;
 
@@ -21,14 +21,14 @@ import com.example.nolitsou.hapi.server.SocketService;
 //< uses-library android:name="android.test.runner" / >
 //
 //The activity you want to test will be the "T" type of ActivityInstrumentationTestCase2
-public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActivity> {
+public class AbstractActivityTest extends ActivityInstrumentationTestCase2<AbstractActivity> {
 
-    private MainActivity mainActivity;
+    private AbstractActivity AbstractActivity;
 
-    public MainActivityTest() {
+    public AbstractActivityTest() {
         // create a default constructor and pass the activity class
         // you want to test to the super() constructor
-        super(MainActivity.class);
+        super(AbstractActivity.class);
     }
 
     @Override
@@ -41,17 +41,17 @@ public class MainActivityTest extends ActivityInstrumentationTestCase2<MainActiv
         setActivityInitialTouchMode(true);
 
         // init variables
-        mainActivity = getActivity();
+        AbstractActivity = getActivity();
     }
 
     // usually we test some pre-conditions. This method is provided
     // by the test framework and is called after setUp()
     public void testPreconditions() {
-        assertNotNull("alertaActivity is null", mainActivity);
+        assertNotNull("alertaActivity is null", AbstractActivity);
     }
 
     public void testSocket() {
-        Settings.loadSettings(mainActivity);
+        Settings.loadSettings(AbstractActivity);
         SocketService socketService = new SocketService();
         assertEquals(false, socketService.connect(Settings.host, "totallyWrongToken"));
 

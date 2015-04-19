@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.example.nolitsou.hapi.ActionBarContainer xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/actionbar"
     android:layout_width="match_parent"
-    android:layout_height="50dp"
+    android:layout_height="@dimen/actionBar_height"
     android:background="#494949" >
 
     <ImageView
@@ -33,22 +33,7 @@
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true" >
 
-        <ImageButton
-            android:id="@+id/actionbar_player"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginRight="8dp"
-            android:background="@null"
-            android:src="@android:drawable/ic_media_play" />
-        <ImageButton
-            android:id="@+id/actionbar_search"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginRight="8dp"
-            android:background="@null"
-            android:src="@android:drawable/ic_menu_search"
-            android:visibility="gone" />
 
     </LinearLayout>
 
-</RelativeLayout>
+</com.example.nolitsou.hapi.ActionBarContainer>

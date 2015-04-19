@@ -4,6 +4,8 @@ import android.content.Context;
 import android.graphics.Bitmap;
 
 import com.example.nolitsou.hapi.data.SocketData;
+import com.example.nolitsou.hapi.music.data.Album;
+import com.example.nolitsou.hapi.music.data.Artist;
 import com.github.nkzawa.socketio.client.Ack;
 
 import org.json.JSONArray;
@@ -186,7 +188,7 @@ public class Track extends SocketData {
             @Override
             public void call(Object... args) {
                 if (args.length > 0) {
-                    setCover((Bitmap)args[0]);
+                    setCover((Bitmap) args[0]);
                 }
                 ack.call(args);
             }

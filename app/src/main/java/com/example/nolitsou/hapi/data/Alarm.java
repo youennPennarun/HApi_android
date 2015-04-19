@@ -4,8 +4,7 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.RelativeLayout;
 
-import com.example.nolitsou.hapi.AlarmFragment;
-import com.example.nolitsou.hapi.MainActivity;
+import com.example.nolitsou.hapi.AbstractActivity;
 import com.github.nkzawa.emitter.Emitter;
 import com.github.nkzawa.socketio.client.Socket;
 
@@ -25,7 +24,6 @@ public class Alarm extends SocketData implements Comparable {
     public static ArrayAdapter<Alarm> notify;
     public static RelativeLayout loadingAlarmsLL;
     public static boolean dataLoading = false;
-    private static AlarmFragment alarmFragment = null;
     private static ArrayList<Alarm> alarms = new ArrayList<Alarm>();
     ;
     private String _id;
@@ -165,9 +163,7 @@ public class Alarm extends SocketData implements Comparable {
                                         if (updated.has("enable")) {
                                             alarm.enable = updated.getBoolean("enable");
                                             final Alarm tmp = alarm;
-                                            if (alarmFragment != null) {
-                                                updateList();
-                                            }
+                                           // TODO
                                         }
                                         if (updated.has("time")) {
                                             alarm.time = strToDate(updated.getString("time"));
@@ -231,11 +227,8 @@ public class Alarm extends SocketData implements Comparable {
         Alarm.alarms = alarms;
     }
 
-    public static void setAlarmFragment(AlarmFragment fragment) {
-        Alarm.alarmFragment = fragment;
-    }
 
-    public static void setActivity(MainActivity activity) {
+    public static void setActivity(AbstractActivity activity) {
         Alarm.activity = activity;
     }
 

@@ -1,16 +1,15 @@
 package com.example.nolitsou.hapi;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.os.AsyncTask;
-import android.os.Bundle;
+import android.util.AttributeSet;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.TimePicker;
 
 import com.example.nolitsou.hapi.data.Alarm;
 import com.github.nkzawa.socketio.client.Ack;
@@ -19,26 +18,27 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.Calendar;
-
-public class AlarmFragment extends CustomFragment {
+public class AlarmContainer extends FrameLayout {
 
     private static final String LOG_STR = "AlarmFragment";
-    private ViewGroup rootView;
+    private View rootView;
     private AlarmsAdapter listAdapter;
+    private ListView alarmListView;
+
+    public AlarmContainer(Context context, AttributeSet attrs) {
+        super(context, attrs);
+    }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        this.rootView = (ViewGroup) inflater.inflate(
-                R.layout.alarms, container, false);
-        Alarm.setAlarmFragment(this);
-        title = "Alarms";
+    public void onFinishInflate() {
+        rootView = getRootView();
+        Alarm.setAlarmContainer(this);
         TextView addAlarm = (TextView) rootView.findViewById(R.id.addAlarmButton);
+        /*
         addAlarm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                final View addAlarmView = LayoutInflater.from(getActivity()).inflate(R.layout.alarm_edit, null);
+                final View addAlarmView = LayoutInflater.from(getContext()).inflate(R.layout.alarm_edit, null);
                 rootView.addView(addAlarmView);
                 addAlarmView.findViewById(R.id.addAlarm_cancel).setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -59,16 +59,13 @@ public class AlarmFragment extends CustomFragment {
                 });
             }
         });
-        ListView l = (ListView) rootView.findViewById(R.id.alarmList);
-        this.setListAdapter(new AlarmsAdapter(getActivity(), Alarm.getAlarms()));
-        l.setAdapter(listAdapter);
+        */
+        this.alarmListView = (ListView) rootView.findViewById(R.id.alarmList);
+        this.setListAdapter(new AlarmsAdapter(getContext(), Alarm.getAlarms()));
+        alarmListView.setAdapter(listAdapter);
         getListAdapter().notifyDataSetChanged();
-        if (((MainActivity) getActivity()).socketConnected()) {
-            loadData();
-        }
 
         Alarm.loadingAlarmsLL = ((RelativeLayout) rootView.findViewById(R.id.loading_alarms));
-        return rootView;
     }
 
     public AlarmsAdapter getListAdapter() {
@@ -92,7 +89,7 @@ public class AlarmFragment extends CustomFragment {
     }
 
     public void loadData() {
-        if (getActivity() != null && ((MainActivity) getActivity()).socketConnected()) {
+        if (getContext() != null && ((AbstractActivity) getContext()).socketConnected()) {
             Log.i(LOG_STR, "Loading alarms");
             GetAlarmsTask task = new GetAlarmsTask(getListAdapter());
             task.execute();
@@ -118,7 +115,7 @@ public class AlarmFragment extends CustomFragment {
         protected Void doInBackground(String... data) {
             done = false;
             Log.i(LOG_STR, "getting alarms");
-            ((MainActivity) getActivity()).getSocketService().getSocket().emit("alarm:get", new JSONObject(), new Ack() {
+            ((AbstractActivity) getContext()).getSocketService().getSocket().emit("alarm:get", new JSONObject(), new Ack() {
                 @Override
                 public void call(Object... arg0) {
                     Alarm.getAlarms().clear();

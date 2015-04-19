@@ -13,10 +13,10 @@ import com.example.nolitsou.hapi.music.Track;
 import java.util.ArrayList;
 
 public class TrackListAdapter extends ArrayAdapter<Track> {
-    private final MainActivity context;
+    private final AbstractActivity context;
     private final ArrayList<Track> values;
 
-    public TrackListAdapter(MainActivity context, int listLayoutId, ArrayList<Track> tracks) {
+    public TrackListAdapter(AbstractActivity context, int listLayoutId, ArrayList<Track> tracks) {
         super(context, listLayoutId, tracks);
         this.context = context;
         this.values = tracks;

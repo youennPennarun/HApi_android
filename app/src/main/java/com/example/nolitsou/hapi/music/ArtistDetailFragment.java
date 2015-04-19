@@ -2,15 +2,16 @@ package com.example.nolitsou.hapi.music;
 
 import android.app.ProgressDialog;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 
-import com.example.nolitsou.hapi.CustomFragment;
-import com.example.nolitsou.hapi.MainActivity;
+import com.example.nolitsou.hapi.AbstractActivity;
 import com.example.nolitsou.hapi.R;
 import com.example.nolitsou.hapi.TrackListAdapter;
+import com.example.nolitsou.hapi.music.data.Artist;
 import com.example.nolitsou.hapi.widgets.ExpandableGridView;
 import com.example.nolitsou.hapi.widgets.ExpandableListView;
 import com.github.nkzawa.socketio.client.Ack;
@@ -18,7 +19,7 @@ import com.github.nkzawa.socketio.client.Ack;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class ArtistDetailFragment extends CustomFragment {
+public class ArtistDetailFragment extends Fragment {
     public ProgressDialog dialog;
     private ViewGroup rootView;
     private String artistId = null;
@@ -65,22 +66,17 @@ public class ArtistDetailFragment extends CustomFragment {
             @Override
             public void run() {
                 ExpandableListView listView = (ExpandableListView) rootView.findViewById(R.id.artistDetail_popularList);
-                listView.setAdapter(new TrackListAdapter(((MainActivity) getActivity()), R.layout.artist_detail, artist.topTracks));
+                listView.setAdapter(new TrackListAdapter(((AbstractActivity) getActivity()), R.layout.artist_detail, artist.topTracks));
                 listView.setExpanded(true);
 
                 ExpandableGridView albumList = (ExpandableGridView) rootView.findViewById(R.id.artistDetail_albumList);
 
-                albumList.setAdapter(new AlbumGridAdapter(((MainActivity) getActivity()), artist.albums));
+                albumList.setAdapter(new AlbumGridAdapter(((AbstractActivity) getActivity()), artist.albums));
                 albumList.setExpanded(true);
-                ((MainActivity) getActivity()).setActionBarTitle(artist.getName());
+                ((AbstractActivity) getActivity()).setActionBarTitle(artist.getName());
                 dialog.dismiss();
             }
         });
     }
 
-    @Override
-    public void loadData() {
-        // TODO Auto-generated method stub
-
-    }
 }

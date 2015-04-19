@@ -11,19 +11,19 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.example.nolitsou.hapi.MainActivity;
+import com.example.nolitsou.hapi.AbstractActivity;
 import com.example.nolitsou.hapi.R;
 import com.example.nolitsou.hapi.utils.LoadImageTask;
 
 import java.util.ArrayList;
 
 public class PlaylistsListAdapter extends ArrayAdapter<Playlist> {
-    private final MainActivity activity;
+    private final AbstractActivity activity;
     private final ArrayList<Playlist> values;
     private AbsListView lv;
     private boolean scrolling;
 
-    public PlaylistsListAdapter(MainActivity context, ArrayList<Playlist> playlists, AbsListView lv) {
+    public PlaylistsListAdapter(AbstractActivity context, ArrayList<Playlist> playlists, AbsListView lv) {
         super(context, R.layout.alarm_list, playlists);
         this.activity = context;
         this.values = playlists;
@@ -41,7 +41,7 @@ public class PlaylistsListAdapter extends ArrayAdapter<Playlist> {
         rowView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                activity.changeFragment(new InPlaylistFragment(values.get(position)));
+                //activity.changeFragment(new InPlaylistFragment(values.get(position)));
             }
         });
         ImageView cover = (ImageView) rowView.findViewById(R.id.playlistImage);

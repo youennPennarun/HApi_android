@@ -14,7 +14,9 @@ public class NotificationReceiver extends BroadcastReceiver {
 
     public static SocketService socketService;
 
-    public NotificationReceiver(){}
+    public NotificationReceiver() {
+    }
+
     @Override
     public void onReceive(Context context, Intent intent) {
 

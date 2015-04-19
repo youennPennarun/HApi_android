@@ -42,11 +42,11 @@ import java.util.ArrayList;
 
 public class SocketService extends Service {
     public final static int REGISTER_CLIENT = -1;
-    public SocketConnectionEnum status = SocketConnectionEnum.DISCONNECTED;
     private final static String LOG_STR = "SocketService:";
     public static boolean piConnected = false;
     private final IBinder mBinder = new SocketBinder();
-    ArrayList<Messenger> clients = new ArrayList<Messenger>();
+    public SocketConnectionEnum status = SocketConnectionEnum.DISCONNECTED;
+    ArrayList<Messenger> clients = new ArrayList<>();
     private Messenger messenger = new Messenger(new IncomingHandler(this));
     private PlayerControl player = new PlayerControl(this);
     private Socket socket;
@@ -95,17 +95,7 @@ public class SocketService extends Service {
         }).on("pi:is-logged-in", new Emitter.Listener() {
             @Override
             public void call(Object... args) {
-                if (args.length > 0) {
-                    if ((boolean) args[0]) {
-                        //activity.getPlayerFragment().setPiConnectedView();
-                        piConnected = true;
-                        //activity.dismissPiNotif();
-                    } else {
-                        //activity.getPlayerFragment().setPiNotConnectedView();
-                        piConnected = false;
-                        //activity.notifPiDisconnected();
-                    }
-                }
+                // TODO
 
             }
         }).on("pi:logged-out", new Emitter.Listener() {
@@ -255,7 +245,7 @@ public class SocketService extends Service {
         if (isConnected()) {
             return SocketConnectionEnum.CONNECTED;
         } else {
-            return SocketConnectionEnum.DISCONNECTED;
+            return status;
         }
     }
 
@@ -265,6 +255,22 @@ public class SocketService extends Service {
 
     public PlayerControl getPlayer() {
         return player;
+    }
+
+    static class IncomingHandler extends Handler {
+        private final WeakReference<SocketService> mService;
+
+        IncomingHandler(SocketService service) {
+            mService = new WeakReference<>(service);
+        }
+
+        @Override
+        public void handleMessage(Message msg) {
+            SocketService service = mService.get();
+            if (service != null) {
+                service.handleMessage(msg);
+            }
+        }
     }
 
     public class SocketBinder extends Binder {
@@ -290,12 +296,12 @@ public class SocketService extends Service {
         protected Void doInBackground(String... data) {
             Log.i(LOG_STR, "Executing ServerLinkTask");
             this.url = Settings.host;
-            if(!this.url.equals("")) {
+            if (!this.url.equals("")) {
                 if (!url.endsWith("/")) {
                     url += "/";
                 }
                 String url_select = url + "user/login/token";
-                ArrayList<NameValuePair> param = new ArrayList<NameValuePair>();
+                ArrayList<NameValuePair> param = new ArrayList<>();
                 param.add(new BasicNameValuePair("username", Settings.username));
                 param.add(new BasicNameValuePair("password", Settings.password));
                 Log.i(LOG_STR, "Getting token with url " + url_select);
@@ -325,7 +331,7 @@ public class SocketService extends Service {
                     BufferedReader bReader = new BufferedReader(new InputStreamReader(inputStream, "utf-8"), 8);
                     StringBuilder sBuilder = new StringBuilder();
 
-                    String line = null;
+                    String line;
                     while ((line = bReader.readLine()) != null) {
                         sBuilder.append(line + "\n");
                     }
@@ -336,8 +342,8 @@ public class SocketService extends Service {
                 } catch (Exception e) {
                     Log.e("StringBuilding", "Error converting result " + e.toString());
                 }
-            } else{
-                this.status  = SocketConnectionEnum.INVALID_CREDENTIALS;
+            } else {
+                this.status = SocketConnectionEnum.INVALID_CREDENTIALS;
             }
             return null;
         }
@@ -350,29 +356,24 @@ public class SocketService extends Service {
             } else {
                 JSONObject data;
                 try {
-                    System.out.println("!!!-> "+result);
+                    System.out.println("!!!-> " + result);
                     data = (new JSONObject(result)).getJSONObject("data");
                     if (data.has("error")) {
                         String error = data.getString("error");
-                        if(error.equals("invalid user")) {
+                        if (error.equals("invalid user")) {
                             connectionTaskDone(SocketConnectionEnum.INVALID_CREDENTIALS);
                         } else {
                             connectionTaskDone(SocketConnectionEnum.UNKNOWN_ERROR);
                         }
-                        if (error.equals("invalid user")) {
-
-                        }
                     } else if (data.has("token")) {
                         String token = data.getString("token");
                         Log.i(LOG_STR, "Connecting to socket");
-                        //TextView t=(TextView)mainActivity.findViewById(R.id.connectionStatus);
+                        //TextView t=(TextView)AbstractActivity.findViewById(R.id.connectionStatus);
                         if (connect(url, token)) {
                             connectionTaskDone();
                         } else {
                             connectionTaskDone(SocketConnectionEnum.UNKNOWN_ERROR);
                         }
-                    } else {
-
                     }
                 } catch (JSONException e1) {
                     e1.printStackTrace();
@@ -380,22 +381,6 @@ public class SocketService extends Service {
             }
 
 
-        }
-    }
-
-    class IncomingHandler extends Handler {
-        private final WeakReference<SocketService> mService;
-
-        IncomingHandler(SocketService service) {
-            mService = new WeakReference<SocketService>(service);
-        }
-
-        @Override
-        public void handleMessage(Message msg) {
-            SocketService service = mService.get();
-            if (service != null) {
-                service.handleMessage(msg);
-            }
         }
     }
 }

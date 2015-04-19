@@ -14,8 +14,9 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.example.nolitsou.hapi.MainActivity;
+import com.example.nolitsou.hapi.AbstractActivity;
 import com.example.nolitsou.hapi.R;
+import com.example.nolitsou.hapi.music.data.Album;
 
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -24,14 +25,14 @@ public class AlbumGridAdapter extends BaseAdapter {
 
     final ArrayList<Album> mItems;
     final int mCount;
-    private MainActivity context;
+    private AbstractActivity context;
 
     /**
      * Default constructor
      *
      * @param items to fill data to
      */
-    public AlbumGridAdapter(MainActivity context, final ArrayList<Album> items) {
+    public AlbumGridAdapter(AbstractActivity context, final ArrayList<Album> items) {
         this.context = context;
         mCount = items.size();
         mItems = items;

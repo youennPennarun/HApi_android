@@ -1,6 +1,7 @@
-package com.example.nolitsou.hapi.music;
+package com.example.nolitsou.hapi.music.data;
 
 import com.example.nolitsou.hapi.data.SocketData;
+import com.example.nolitsou.hapi.music.Track;
 import com.github.nkzawa.socketio.client.Ack;
 
 import org.json.JSONArray;

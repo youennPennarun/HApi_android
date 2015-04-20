@@ -1,4 +1,4 @@
-package com.example.nolitsou.hapi.music.playlist;
+package com.example.nolitsou.hapi.music.userPlaylist;
 
 import android.app.Activity;
 import android.app.Fragment;
@@ -10,20 +10,20 @@ import android.widget.ListView;
 
 import com.example.nolitsou.hapi.AbstractActivity;
 import com.example.nolitsou.hapi.R;
-import com.example.nolitsou.hapi.TrackListAdapter;
+import com.example.nolitsou.hapi.music.TrackListAdapter;
 import com.example.nolitsou.hapi.music.Track;
 import com.github.nkzawa.socketio.client.Ack;
 
 import java.util.ArrayList;
 
-public class InPlaylistFragment extends Fragment {
+public class InUserPlaylistFragment extends Fragment {
 
     private ViewGroup rootView;
-    private Playlist playlist;
+    private UserPlaylist userPlaylist;
     private TrackListAdapter adapter;
 
-    public InPlaylistFragment(Playlist playlist) {
-        this.playlist = playlist;
+    public InUserPlaylistFragment(UserPlaylist userPlaylist) {
+        this.userPlaylist = userPlaylist;
     }
 
     @Override
@@ -33,19 +33,19 @@ public class InPlaylistFragment extends Fragment {
         rootView = (ViewGroup) inflater.inflate(
                 R.layout.tracklist, container, false);
         ListView trackLV = (ListView) rootView.findViewById(R.id.trackList);
-        if (playlist.getTracks() == null) {
-            playlist.setTracks(new ArrayList<Track>());
+        if (userPlaylist.getTracks() == null) {
+            userPlaylist.setTracks(new ArrayList<Track>());
         }
-        adapter = new TrackListAdapter(((AbstractActivity) getActivity()), R.layout.tracklist, playlist.getTracks());
+        adapter = new TrackListAdapter(((AbstractActivity) getActivity()), R.layout.tracklist, userPlaylist.getTracks());
         trackLV.setAdapter(adapter);
-        playlist.loadTracks(new Ack() {
+        userPlaylist.loadTracks(new Ack() {
             @Override
             public void call(Object... arg0) {
                 activity.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         adapter.notifyDataSetChanged();
-                        System.out.println("NOW:" + playlist.getTracks().size());
+                        System.out.println("NOW:" + userPlaylist.getTracks().size());
                     }
                 });
 

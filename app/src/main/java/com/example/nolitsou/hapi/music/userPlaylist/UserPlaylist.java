@@ -1,4 +1,4 @@
-package com.example.nolitsou.hapi.music.playlist;
+package com.example.nolitsou.hapi.music.userPlaylist;
 
 import android.graphics.Bitmap;
 
@@ -12,7 +12,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
-public class Playlist extends SocketData {
+public class UserPlaylist extends SocketData {
     private String name;
     private String spotify_id;
     private String spotify_uri;
@@ -21,7 +21,7 @@ public class Playlist extends SocketData {
     private Bitmap imageBitmap;
     private ArrayList<Track> tracks = new ArrayList<Track>();
 
-    public Playlist(String name, String spotify_id, String spotify_uri, int nbTracks, String imageUri) {
+    public UserPlaylist(String name, String spotify_id, String spotify_uri, int nbTracks, String imageUri) {
         super();
         this.name = name;
         this.spotify_id = spotify_id;
@@ -31,7 +31,7 @@ public class Playlist extends SocketData {
         this.imageUri = imageUri;
     }
 
-    public static Playlist spotifyResultToPlaylist(JSONObject json) throws JSONException {
+    public static UserPlaylist spotifyResultToPlaylist(JSONObject json) throws JSONException {
         String name = json.getString("name");
         String spotify_id = json.getString("id");
         String spotify_uri = json.getString("uri");
@@ -40,7 +40,7 @@ public class Playlist extends SocketData {
         if (json.has("images") && json.getJSONArray("images").length() > 0) {
             imageUri = json.getJSONArray("images").getJSONObject(0).getString("url");
         }
-        return new Playlist(name, spotify_id, spotify_uri, nbTracks, imageUri);
+        return new UserPlaylist(name, spotify_id, spotify_uri, nbTracks, imageUri);
     }
 
     public void loadTracks(final Ack ack) {
@@ -130,7 +130,7 @@ public class Playlist extends SocketData {
 
     @Override
     public boolean equals(Object object) {
-        return (object instanceof Playlist && this.spotify_id.equals(((Playlist) object).getSpotify_id()));
+        return (object instanceof UserPlaylist && this.spotify_id.equals(((UserPlaylist) object).getSpotify_id()));
     }
 
 

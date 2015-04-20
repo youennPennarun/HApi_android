@@ -10,7 +10,6 @@ import android.widget.ListView;
 
 import com.example.nolitsou.hapi.AbstractActivity;
 import com.example.nolitsou.hapi.R;
-import com.example.nolitsou.hapi.TrackListAdapter;
 import com.example.nolitsou.hapi.music.data.Artist;
 import com.example.nolitsou.hapi.widgets.ExpandableGridView;
 import com.example.nolitsou.hapi.widgets.ExpandableListView;

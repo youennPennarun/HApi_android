@@ -24,7 +24,7 @@
             layout="@layout/actionbar"
             android:clipChildren="false" />
 
-        <com.example.nolitsou.hapi.music.playlist.PlaylistContainer
+        <com.example.nolitsou.hapi.music.userPlaylist.UserPlaylistContainer
             android:id="@+id/playlists"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -41,7 +41,7 @@
                 android:layout_height="wrap_content" >
             </ListView>
 
-        </com.example.nolitsou.hapi.music.playlist.PlaylistContainer>
+        </com.example.nolitsou.hapi.music.userPlaylist.UserPlaylistContainer>
     </RelativeLayout>
 
     <include

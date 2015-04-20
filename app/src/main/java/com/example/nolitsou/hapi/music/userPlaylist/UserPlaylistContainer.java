@@ -1,4 +1,4 @@
-package com.example.nolitsou.hapi.music.playlist;
+package com.example.nolitsou.hapi.music.userPlaylist;
 
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -19,13 +19,13 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
-public class PlaylistContainer extends LinearLayout {
+public class UserPlaylistContainer extends LinearLayout {
     private static final String LOG_STR = "PlaylistFragment";
     public String title = "Playlists";
-    private ArrayList<Playlist> playlists;
-    private PlaylistsListAdapter adapter;
+    private ArrayList<UserPlaylist> userPlaylists;
+    private UserPlaylistsListAdapter adapter;
 
-    public PlaylistContainer(Context context, AttributeSet attrs) {
+    public UserPlaylistContainer(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
 
@@ -34,13 +34,13 @@ public class PlaylistContainer extends LinearLayout {
     }
 
     public void loadData() {
-        this.playlists = ((AbstractActivity) getContext()).getSocketService().getUser().getPlaylists();
+        this.userPlaylists = ((AbstractActivity) getContext()).getSocketService().getUser().getUserPlaylists();
         ListView listView = (ListView) getRootView().findViewById(R.id.playlist_list);
-        adapter = new PlaylistsListAdapter((AbstractActivity) getContext(), playlists, listView);
+        adapter = new UserPlaylistsListAdapter((AbstractActivity) getContext(), userPlaylists, listView);
         listView.setAdapter(adapter);
         Log.i(LOG_STR, "Getting playlists");
         if (((AbstractActivity) getContext()).getSocketService().isConnected()) {
-            GetPlaylistsTask task = new GetPlaylistsTask(adapter, playlists);
+            GetPlaylistsTask task = new GetPlaylistsTask(adapter, userPlaylists);
             task.execute();
         } else {
             Toast toast = new Toast(getContext());
@@ -52,11 +52,11 @@ public class PlaylistContainer extends LinearLayout {
     private class GetPlaylistsTask extends AsyncTask<String, String, Void> {
         //private ProgressDialog mDialog;
         private ProgressDialog mDialog;
-        private PlaylistsListAdapter adapter;
+        private UserPlaylistsListAdapter adapter;
         private boolean done;
-        private ArrayList<Playlist> values;
+        private ArrayList<UserPlaylist> values;
 
-        public GetPlaylistsTask(PlaylistsListAdapter adapter, ArrayList<Playlist> values) {
+        public GetPlaylistsTask(UserPlaylistsListAdapter adapter, ArrayList<UserPlaylist> values) {
             this.adapter = adapter;
             this.values = values;
         }
@@ -83,7 +83,7 @@ public class PlaylistContainer extends LinearLayout {
                             if (json.has("status") && json.getString("status").equals("success")) {
                                 JSONArray playlistsJSON = json.getJSONObject("playlists").getJSONArray("items");
                                 for (i = 0; i < playlistsJSON.length(); i++) {
-                                    Playlist p = Playlist.spotifyResultToPlaylist(playlistsJSON.getJSONObject(i));
+                                    UserPlaylist p = UserPlaylist.spotifyResultToPlaylist(playlistsJSON.getJSONObject(i));
                                     if (!values.contains(p)) {
                                         values.add(p);
                                     }

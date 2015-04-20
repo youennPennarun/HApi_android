@@ -56,6 +56,7 @@ public class SocketService extends Service {
     public boolean connect(String url, String token) {
         if (getSocket() != null) {
             getSocket().disconnect();
+            getSocket().close();
         }
         try {
             Options opts = new Options();
@@ -121,6 +122,11 @@ public class SocketService extends Service {
                 Log.w(LOG_STR, "socket disconnected");
             }
 
+        }).on(Socket.EVENT_RECONNECT_ATTEMPT, new Emitter.Listener(){
+            @Override
+            public void call(Object... args) {
+                System.out.println("RECONNECTING!!!!!");
+            }
         }).on("error", new Emitter.Listener() {
             @Override
             public void call(Object... args) {
@@ -148,7 +154,8 @@ public class SocketService extends Service {
     public void reconnect() {
         Log.i(LOG_STR, "reconnecting");
         if (socket.connected()) {
-            socket.disconnect();
+            getSocket().disconnect();
+            getSocket().close();
         }
         ServerLinkTask task = new ServerLinkTask();
         task.execute();

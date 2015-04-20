@@ -2,7 +2,7 @@ package com.example.nolitsou.hapi;
 
 import android.os.Bundle;
 
-import com.example.nolitsou.hapi.music.playlist.PlaylistContainer;
+import com.example.nolitsou.hapi.music.userPlaylist.UserPlaylistContainer;
 
 /**
  * Created by nolitsou on 4/15/15.
@@ -11,12 +11,12 @@ public class PlaylistActivity extends AbstractActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.playlist_main);
+        setContentView(R.layout.user_playlist_main);
         createDefault();
     }
     @Override
     protected void loadData() {
-        PlaylistContainer container = (PlaylistContainer)findViewById(R.id.playlists);
+        UserPlaylistContainer container = (UserPlaylistContainer)findViewById(R.id.playlists);
         container.loadData();
 
     }

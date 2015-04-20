@@ -12,6 +12,7 @@ import android.os.Messenger;
 import android.os.RemoteException;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
+import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -62,21 +63,6 @@ public abstract class AbstractActivity extends FragmentActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        /*
-        LinearLayout menuGotoPlaylists = ((LinearLayout) getmSlidingMenu().getRootView().findViewById(R.id.menu_goto_playlist));
-        menuGotoPlaylists.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (!getMainFragment().getClass().equals(PlaylistFragment.class)) {
-                    changeFragment(new PlaylistFragment());
-                }
-                if (!getmSlidingMenu().isClosed()) {
-                    getmSlidingMenu().toggleLeftDrawer();
-                }
-            }
-        });
-        */
     }
     protected void createDefault () {Log.i(LOG_STR, "Stating AbstractActivity");
         SocketData.setActivity(this);
@@ -85,8 +71,28 @@ public abstract class AbstractActivity extends FragmentActivity {
         playerContainer = (PlayerContainer) findViewById(R.id.player);
         try {
             slidingLayout = (SlidingUpPanelLayout) findViewById(R.id.app_main_frame);
+            slidingLayout.setPanelSlideListener(new SlidingUpPanelLayout.PanelSlideListener() {
+                @Override
+                public void onPanelSlide(View view, float v) {
+                }
+                @Override
+                public void onPanelCollapsed(View view) {
+                    playerContainer.viewPanelCollapsed.setVisibility(View.VISIBLE);
+                    playerContainer.viewPanelExpanded.setVisibility(View.GONE);
+                }
+
+                @Override
+                public void onPanelExpanded(View view) {
+                    playerContainer.viewPanelCollapsed.setVisibility(View.GONE);
+                    playerContainer.viewPanelExpanded.setVisibility(View.VISIBLE);
+                }
+                @Override
+                public void onPanelAnchored(View view) {}
+                @Override
+                public void onPanelHidden(View view) {}
+            });
         } catch(ClassCastException e) {}
-            setmSlidingMenu(new SimpleSideDrawer(this));
+        setmSlidingMenu(new SimpleSideDrawer(this));
         getmSlidingMenu().setLeftBehindContentView(R.layout.drawermenu_left);
         LinearLayout menuGotoAlarm = ((LinearLayout) getmSlidingMenu().getRootView().findViewById(R.id.menu_goto_alarms));
         actionBar = (ActionBarContainer)findViewById(R.id.app_frame_actionBar);
@@ -195,9 +201,13 @@ public abstract class AbstractActivity extends FragmentActivity {
                 System.out.println(socketService.getPlayer().getPlaying());
                 if (socketService.getPlayer().getPlaying() != null) {
                     playerContainer.setPlaying(socketService.getPlayer().getPlaying());
+                    playerContainer.playlistUpdated();
                 }
             } else if (msg.what == PlayerControl.TRACK_STATUS && playerContainer != null) {
                 playerContainer.playerStatusChanged();
+            } else if (msg.what == PlayerControl.PLAYLIST_UPDATE && playerContainer != null) {
+                System.out.println("msg.what == PlayerControl.PLAYLIST_UPDATE && playerContainer != null");
+                playerContainer.playlistUpdated();
             } else {
                 super.handleMessage(msg);
             }

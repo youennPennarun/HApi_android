@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
@@ -22,6 +23,9 @@ public class PlayerContainer extends FrameLayout {
     private TextView trackName;
     private TextView trackArtist;
 
+    public View viewPanelExpanded;
+    public View viewPanelCollapsed;
+
     private View playButton;
     private View pauseButton;
     private View nextButton;
@@ -30,8 +34,14 @@ public class PlayerContainer extends FrameLayout {
     private View playButtonHead;
     private View pauseButtonHead;
 
+    private View showPlaylist;
+
     private SeekBar volumeBar;
     private View playRandom;
+    private View playerContentView;
+    private View playlistView;
+    private ListView playlistListView;
+    private PlaylistListAdapter playlistAdapter;
 
     public PlayerContainer(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -41,6 +51,9 @@ public class PlayerContainer extends FrameLayout {
     @Override
     public void onFinishInflate() {
         super.onFinishInflate();
+        this.viewPanelExpanded = getRootView().findViewById(R.id.viewPanelExpanded);
+        this.viewPanelCollapsed = getRootView().findViewById(R.id.viewPanelCollapsed);
+        this.showPlaylist = getRootView().findViewById(R.id.player_header_show_playlist);
         this.playerCover = (ImageView) getRootView().findViewById(R.id.player_cover);
         this.playerHeaderCover = (ImageView) getRootView().findViewById(R.id.player_header_cover);
         this.trackName = (TextView) getRootView().findViewById(R.id.trackName);
@@ -54,6 +67,13 @@ public class PlayerContainer extends FrameLayout {
         this.previousButton = getRootView().findViewById(R.id.player_previousButton);
         this.showVolume = getRootView().findViewById(R.id.showVolume);
         this.playRandom = getRootView().findViewById(R.id.player_random);
+
+        this.playlistView = getRootView().findViewById(R.id.playlistView);
+        this.playerContentView = getRootView().findViewById(R.id.player_content);
+
+        this.playlistListView = (ListView)getRootView().findViewById(R.id.playlistList);
+
+
 
     }
 
@@ -88,6 +108,8 @@ public class PlayerContainer extends FrameLayout {
     public void setListeners() {
         if (playButton != null) {
             final PlayerControl player = ((AbstractActivity) getContext()).getSocketService().getPlayer();
+            this.playlistAdapter = new PlaylistListAdapter((AbstractActivity)getContext(), player.getPlaylist());
+            playlistListView.setAdapter(playlistAdapter);
             playButton.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -130,6 +152,20 @@ public class PlayerContainer extends FrameLayout {
                     player.playRandom();
                 }
             });
+
+            showPlaylist.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (playlistView.getVisibility() == View.VISIBLE) {
+                        playlistView.setVisibility(View.GONE);
+                        playerContentView.setVisibility(View.VISIBLE);
+                    } else {
+                        playlistView.setVisibility(View.VISIBLE);
+                        playerContentView.setVisibility(View.GONE);
+                    }
+                }
+            });
+
             showVolume.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -188,6 +224,15 @@ public class PlayerContainer extends FrameLayout {
             pauseButtonHead.setVisibility(View.GONE);
             playButton.setVisibility(View.VISIBLE);
             pauseButton.setVisibility(View.GONE);
+        }
+    }
+
+    public void playlistUpdated() {
+        if(playlistAdapter != null) {
+            final PlayerControl player = ((AbstractActivity) getContext()).getSocketService().getPlayer();
+            this.playlistAdapter = new PlaylistListAdapter((AbstractActivity)getContext(), player.getPlaylist());
+            playlistListView.setAdapter(playlistAdapter);
+            playlistAdapter.notifyDataSetChanged();
         }
     }
 }

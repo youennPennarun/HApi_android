@@ -1,4 +1,4 @@
-package com.example.nolitsou.hapi;
+package com.example.nolitsou.hapi.music;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -8,7 +8,8 @@ import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.example.nolitsou.hapi.music.Track;
+import com.example.nolitsou.hapi.AbstractActivity;
+import com.example.nolitsou.hapi.R;
 
 import java.util.ArrayList;
 

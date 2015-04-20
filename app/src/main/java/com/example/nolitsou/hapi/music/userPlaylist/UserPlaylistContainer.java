@@ -71,12 +71,10 @@ public class UserPlaylistContainer extends LinearLayout {
 
         protected Void doInBackground(String... data) {
             done = false;
-            System.out.println("GET PLAYLISTS:start");
             ((AbstractActivity) getContext()).getSocketService().getSocket().emit("music:playlists:get", new JSONObject(), new Ack() {
                 @Override
                 public void call(Object... arg0) {
                     int i;
-                    System.out.println("GET PLAYLISTS:got it");
                     if (arg0.length > 0) {
                         JSONObject json = ((JSONObject) arg0[0]);
                         try {

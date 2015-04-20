@@ -98,6 +98,8 @@ public abstract class AbstractActivity extends FragmentActivity {
         actionBar = (ActionBarContainer)findViewById(R.id.app_frame_actionBar);
         Intent i= new Intent(this, SocketService.class);
         this.startService(i);
+        bindService(i, mConnection,
+                Context.BIND_AUTO_CREATE);
         actionBar.setListeners();
         onNewIntent(getIntent());
 
@@ -197,8 +199,6 @@ public abstract class AbstractActivity extends FragmentActivity {
             } else if (msg.what == SocketConnectionEnum.INVALID_CREDENTIALS.getCode()) {
                 // TODO
             } else if (msg.what == PlayerControl.TRACK_UPDATE) {
-                System.out.println("!!!!!!!!!!!!!!!!!!!");
-                System.out.println(socketService.getPlayer().getPlaying());
                 if (socketService.getPlayer().getPlaying() != null) {
                     playerContainer.setPlaying(socketService.getPlayer().getPlaying());
                     playerContainer.playlistUpdated();
@@ -206,7 +206,6 @@ public abstract class AbstractActivity extends FragmentActivity {
             } else if (msg.what == PlayerControl.TRACK_STATUS && playerContainer != null) {
                 playerContainer.playerStatusChanged();
             } else if (msg.what == PlayerControl.PLAYLIST_UPDATE && playerContainer != null) {
-                System.out.println("msg.what == PlayerControl.PLAYLIST_UPDATE && playerContainer != null");
                 playerContainer.playlistUpdated();
             } else {
                 super.handleMessage(msg);

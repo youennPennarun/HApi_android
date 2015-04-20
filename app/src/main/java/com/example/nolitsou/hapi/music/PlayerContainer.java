@@ -101,7 +101,6 @@ public class PlayerContainer extends FrameLayout {
                 trackArtist.setText("");
             }
         } else {
-            System.out.println("track name undefined");
         }
     }
 
@@ -175,7 +174,6 @@ public class PlayerContainer extends FrameLayout {
                         Point size = new Point();
                         display.getSize(size);
                         int windowWidth = size.x;
-                        System.out.println("show volume bar");
                         int[] buttonPos = {0, 0};
                         showVolume.getLocationOnScreen(buttonPos);
                         volumeBar = new SeekBar(getContext());

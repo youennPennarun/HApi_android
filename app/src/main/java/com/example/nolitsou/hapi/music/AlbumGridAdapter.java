@@ -60,7 +60,6 @@ public class AlbumGridAdapter extends BaseAdapter {
                     new GestureDetector.SimpleOnGestureListener() {
                         public void onLongPress(MotionEvent e) {
                             Album album = mItems.get(position);
-                            System.out.println("play album " + album.getName() + ":");
                             context.getSocketService().getPlayer().playAlbum(album);
                         }
                     });

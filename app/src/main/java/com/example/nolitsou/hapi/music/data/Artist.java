@@ -38,7 +38,6 @@ public class Artist extends SocketData {
 
 
     public static void searchArtistById(String id, Ack ack) {
-        System.out.println("search artist with id :" + id);
         JSONObject data = new JSONObject();
         JSONObject artist = new JSONObject();
         try {

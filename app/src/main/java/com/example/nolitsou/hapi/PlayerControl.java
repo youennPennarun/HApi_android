@@ -185,16 +185,13 @@ public class PlayerControl {
     public void setPlaylist(ArrayList<Track> playlist, int idPlaying) {
         this.playlist = playlist;
         this.idPlaying = idPlaying;
-        System.out.println("setPlaylist(ArrayList<Track> playlist, int idPlaying)");
         socketService.broadcast(PLAYLIST_UPDATE);
         setPlaying();
     }
 
     public void setPlaying() {
-        System.out.println("idPlaying = "+idPlaying +" playlist size = "+playlist.size());
         if (idPlaying > -1 && idPlaying < playlist.size()) {
             playing = this.playlist.get(idPlaying);
-            System.out.println(this.playlist.get(idPlaying).getName());
             setStatus("PLAY");
             PlayerNotification.create(socketService);
         } else {

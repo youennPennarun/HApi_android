@@ -62,7 +62,6 @@ public class UserPlaylist extends SocketData {
                                         if (arr.getJSONObject(i).has("track")) {
                                             tracks.add(Track.spotifyResultToTrack(arr.getJSONObject(i).getJSONObject("track")));
                                         } else {
-                                            System.out.println("missing track");
                                         }
                                     }
                                 }

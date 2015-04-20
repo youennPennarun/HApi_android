@@ -146,7 +146,6 @@ public class Track extends SocketData {
                 @Override
                 public void call(Object... arg0) {
                     if (arg0.length > 0) {
-                        System.out.println(arg0[0]);
                     }
                 }
             });

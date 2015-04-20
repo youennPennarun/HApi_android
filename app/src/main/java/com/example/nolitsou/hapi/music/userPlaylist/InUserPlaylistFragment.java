@@ -45,7 +45,6 @@ public class InUserPlaylistFragment extends Fragment {
                     @Override
                     public void run() {
                         adapter.notifyDataSetChanged();
-                        System.out.println("NOW:" + userPlaylist.getTracks().size());
                     }
                 });
 

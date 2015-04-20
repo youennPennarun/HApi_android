@@ -13,16 +13,15 @@ import com.example.nolitsou.hapi.server.SocketService;
 import com.github.nkzawa.socketio.client.Ack;
 
 public class PlayerNotification {
-    private final static int PLAYER_NOTIF_ID = 1;
+    public final static int PLAYER_NOTIF_ID = 1;
     public static RemoteViews playerRemoteViews;
     private static SocketService socketService;
 
-    public static RemoteViews create(SocketService socketService) {
+    public static NotificationCompat.Builder getBuilder(SocketService socketService) {
         final Track playing = socketService.getPlayer().getPlaying();
         NotificationReceiver.socketService = socketService;
         PlayerNotification.socketService = socketService;
-        System.out.println("PLAYYING    " + playing.getName());
-        NotificationManager mNotificationManager = (NotificationManager) socketService.getSystemService(Context.NOTIFICATION_SERVICE);
+
         playerRemoteViews = new RemoteViews(socketService.getPackageName(),
                 R.layout.player_notification);
         playerRemoteViews.setTextViewText(R.id.player_notif_trackName, playing.getName());
@@ -77,6 +76,11 @@ public class PlayerNotification {
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(
                 socketService).setSmallIcon(R.drawable.ic_launcher).setContent(
                 playerRemoteViews);
+        return mBuilder;
+    }
+    public static RemoteViews create(SocketService socketService) {
+        NotificationCompat.Builder mBuilder = getBuilder(socketService);
+        NotificationManager mNotificationManager = (NotificationManager) socketService.getSystemService(Context.NOTIFICATION_SERVICE);
         mNotificationManager.notify(PLAYER_NOTIF_ID, mBuilder.build());
         playerStatusChanged();
         return playerRemoteViews;
@@ -95,7 +99,6 @@ public class PlayerNotification {
 
     public static void playerStatusChanged() {
         if (playerRemoteViews != null) {
-            System.out.println();
             if (socketService.getPlayer().getStatus().equals("PLAY")) {
                 playerRemoteViews.setViewVisibility(R.id.player_notif_play, View.GONE);
                 playerRemoteViews.setViewVisibility(R.id.player_notif_pause, View.VISIBLE);

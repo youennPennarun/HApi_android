@@ -1,5 +1,7 @@
 package com.example.nolitsou.hapi.server;
 
+import android.app.Notification;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -9,9 +11,12 @@ import android.os.IBinder;
 import android.os.Message;
 import android.os.Messenger;
 import android.os.RemoteException;
+import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
+import com.example.nolitsou.hapi.AlarmActivity;
 import com.example.nolitsou.hapi.PlayerControl;
+import com.example.nolitsou.hapi.R;
 import com.example.nolitsou.hapi.data.Alarm;
 import com.example.nolitsou.hapi.data.Settings;
 import com.example.nolitsou.hapi.data.User;
@@ -43,6 +48,7 @@ import java.util.ArrayList;
 public class SocketService extends Service {
     public final static int REGISTER_CLIENT = -1;
     private final static String LOG_STR = "SocketService:";
+    private static final long KEEP_ALIVE_INTERVAL = 60000;
     public static boolean piConnected = false;
     private final IBinder mBinder = new SocketBinder();
     public SocketConnectionEnum status = SocketConnectionEnum.DISCONNECTED;
@@ -61,7 +67,7 @@ public class SocketService extends Service {
         try {
             Options opts = new Options();
             opts.reconnection = true;
-            System.out.println(url + "/?" + token);
+            opts.reconnectionDelay=0;
             socket = (IO.socket(url + "?token=" + token, opts));
             System.out.println("socket set");
             setListeners();
@@ -79,6 +85,33 @@ public class SocketService extends Service {
                 e.printStackTrace();
             }
         }
+        Thread keepAlive = new Thread(new Runnable(){
+
+            @Override
+            public void run() {
+                while(true) {
+                    System.out.println("still alive? "+getSocket().connected());
+                    try {
+                        Thread.sleep(60000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        });
+        keepAlive.start();
+        Intent notificationIntent = new Intent(this, AlarmActivity.class);
+        PendingIntent pendingIntent=PendingIntent.getActivity(this, 0,
+                notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        Notification notification=new NotificationCompat.Builder(this)
+                .setSmallIcon(R.drawable.ic_launcher)
+                .setContentText("service...")
+                .setContentIntent(pendingIntent).build();
+
+        startForeground(566, notification);
+
+        System.out.println("connected : "+(socket.connected()));
         return socket.connected();
     }
 
@@ -86,7 +119,6 @@ public class SocketService extends Service {
         getSocket().on(Socket.EVENT_CONNECT, new Emitter.Listener() {
             @Override
             public void call(Object... args) {
-                Log.i(LOG_STR, "socket connceted");
                 socket.emit("music:playing:get");
                 socket.emit("pi:sound:volume:get");
                 socket.emit("pi:is-logged-in");
@@ -104,7 +136,6 @@ public class SocketService extends Service {
             public void call(Object... args) {
                 //activity.getPlayerFragment().setPiNotConnectedView();
                 piConnected = false;
-                System.out.println("pi logged out");
                 //activity.notifPiDisconnected();
             }
         }).on("pi:logged-in", new Emitter.Listener() {
@@ -127,7 +158,43 @@ public class SocketService extends Service {
             public void call(Object... args) {
                 System.out.println("RECONNECTING!!!!!");
             }
-        }).on("error", new Emitter.Listener() {
+        }).on(Socket.EVENT_RECONNECT_ERROR, new Emitter.Listener() {
+            @Override
+            public void call(Object... args) {
+                if (args.length > 0) {
+                    JSONObject error = (JSONObject) args[0];
+                    Log.e(LOG_STR, "socket connection error: " + args[0]);
+                    try {
+                        if (error.getString("type").equals("UnauthorizedError") || error.getString("code").equals("invalid_token")) {
+                            socket.disconnect();
+                            reconnect();
+                        }
+                    } catch (JSONException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+        }).on(Socket.EVENT_CONNECT_ERROR, new Emitter.Listener() {
+            @Override
+            public void call(Object... args) {
+                if (args.length > 0) {
+                    JSONObject error = (JSONObject) args[0];
+                    Log.e(LOG_STR, "socket connection error: " + args[0]);
+                    try {
+                        if (error.getString("type").equals("UnauthorizedError") || error.getString("code").equals("invalid_token")) {
+                            socket.disconnect();
+                            reconnect();
+                        }
+                    } catch (JSONException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+        }).on(Socket.EVENT_ERROR, new Emitter.Listener() {
             @Override
             public void call(Object... args) {
                 if (args.length > 0) {
@@ -190,6 +257,10 @@ public class SocketService extends Service {
     public IBinder onBind(Intent intent) {
         Log.i(LOG_STR, "Got binding request");
         return mBinder;
+    }
+    @Override
+    public void onDestroy() {
+        Log.w("SocketService", "!!!DESTROYED!!!");
     }
 
     public void connectionTaskDone(SocketConnectionEnum e) {
@@ -363,7 +434,6 @@ public class SocketService extends Service {
             } else {
                 JSONObject data;
                 try {
-                    System.out.println("!!!-> " + result);
                     data = (new JSONObject(result)).getJSONObject("data");
                     if (data.has("error")) {
                         String error = data.getString("error");

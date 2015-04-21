@@ -4,6 +4,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
@@ -23,12 +24,21 @@ import com.example.nolitsou.hapi.music.PlayerContainer;
 import com.example.nolitsou.hapi.server.SocketConnectionEnum;
 import com.example.nolitsou.hapi.server.SocketService;
 import com.example.nolitsou.hapi.widgets.SimpleSideDrawer;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GooglePlayServicesUtil;
+import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
 
 /**
  * Created by nolitsou on 4/15/15.
  */
 public abstract class AbstractActivity extends FragmentActivity {
+
     public final static String ACTION_PLAYER_SHOW = "PLAYER_SHOW";
     private final static String LOG_STR = "AbstractActivity:";
     private SimpleSideDrawer mSlidingMenu;
@@ -112,6 +122,22 @@ public abstract class AbstractActivity extends FragmentActivity {
         bindService(intent, mConnection,
                 Context.BIND_AUTO_CREATE);
     }
+    /*
+    private boolean checkPlayServices() {
+        int resultCode = GooglePlayServicesUtil.isGooglePlayServicesAvailable(this);
+        if (resultCode != ConnectionResult.SUCCESS) {
+            if (GooglePlayServicesUtil.isUserRecoverableError(resultCode)) {
+                GooglePlayServicesUtil.getErrorDialog(resultCode, this,
+                        PLAY_SERVICES_RESOLUTION_REQUEST).show();
+            } else {
+                Log.i(LOG_STR, "This device is not supported.");
+                finish();
+            }
+            return false;
+        }
+        return true;
+    }
+    */
 
     @Override
     protected void onPause() {
@@ -213,5 +239,7 @@ public abstract class AbstractActivity extends FragmentActivity {
         }
     }
 
+
     protected abstract void loadData();
+
 }

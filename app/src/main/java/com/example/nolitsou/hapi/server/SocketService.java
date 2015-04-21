@@ -1,7 +1,5 @@
 package com.example.nolitsou.hapi.server;
 
-import android.app.Notification;
-import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -11,12 +9,9 @@ import android.os.IBinder;
 import android.os.Message;
 import android.os.Messenger;
 import android.os.RemoteException;
-import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
-import com.example.nolitsou.hapi.AlarmActivity;
 import com.example.nolitsou.hapi.PlayerControl;
-import com.example.nolitsou.hapi.R;
 import com.example.nolitsou.hapi.data.Alarm;
 import com.example.nolitsou.hapi.data.Settings;
 import com.example.nolitsou.hapi.data.User;
@@ -25,6 +20,7 @@ import com.github.nkzawa.emitter.Emitter;
 import com.github.nkzawa.socketio.client.IO;
 import com.github.nkzawa.socketio.client.IO.Options;
 import com.github.nkzawa.socketio.client.Socket;
+import com.google.android.gms.gcm.GoogleCloudMessaging;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -59,6 +55,13 @@ public class SocketService extends Service {
     private String host;
     private User user = new User();
 
+
+    private final static int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
+
+    public GoogleCloudMessaging gcm;
+    public String regid;
+    public static final String PROJECT_NUMBER = "585409898471";
+
     public boolean connect(String url, String token) {
         if (getSocket() != null) {
             getSocket().disconnect();
@@ -85,31 +88,6 @@ public class SocketService extends Service {
                 e.printStackTrace();
             }
         }
-        Thread keepAlive = new Thread(new Runnable(){
-
-            @Override
-            public void run() {
-                while(true) {
-                    System.out.println("still alive? "+getSocket().connected());
-                    try {
-                        Thread.sleep(60000);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-        });
-        keepAlive.start();
-        Intent notificationIntent = new Intent(this, AlarmActivity.class);
-        PendingIntent pendingIntent=PendingIntent.getActivity(this, 0,
-                notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-
-        Notification notification=new NotificationCompat.Builder(this)
-                .setSmallIcon(R.drawable.ic_launcher)
-                .setContentText("service...")
-                .setContentIntent(pendingIntent).build();
-
-        startForeground(566, notification);
 
         System.out.println("connected : "+(socket.connected()));
         return socket.connected();
@@ -161,7 +139,7 @@ public class SocketService extends Service {
         }).on(Socket.EVENT_RECONNECT_ERROR, new Emitter.Listener() {
             @Override
             public void call(Object... args) {
-                if (args.length > 0) {
+                if (args.length > 0 && args[0] instanceof  JSONObject) {
                     JSONObject error = (JSONObject) args[0];
                     Log.e(LOG_STR, "socket connection error: " + args[0]);
                     try {
@@ -179,7 +157,7 @@ public class SocketService extends Service {
         }).on(Socket.EVENT_CONNECT_ERROR, new Emitter.Listener() {
             @Override
             public void call(Object... args) {
-                if (args.length > 0) {
+                if (args.length > 0 && args[0] instanceof  JSONObject) {
                     JSONObject error = (JSONObject) args[0];
                     Log.e(LOG_STR, "socket connection error: " + args[0]);
                     try {
@@ -398,7 +376,6 @@ public class SocketService extends Service {
                     inputStream = httpEntity.getContent();
                 } catch (IOException e1) {
                     Log.e("UnsupportedEncoding", e1.toString());
-                    e1.printStackTrace();
                     this.status = SocketConnectionEnum.UNKNOWN_ERROR;
                 }
                 if (this.status != null) {
@@ -448,6 +425,7 @@ public class SocketService extends Service {
                         //TextView t=(TextView)AbstractActivity.findViewById(R.id.connectionStatus);
                         if (connect(url, token)) {
                             connectionTaskDone();
+                            getRegId();
                         } else {
                             connectionTaskDone(SocketConnectionEnum.UNKNOWN_ERROR);
                         }
@@ -460,4 +438,44 @@ public class SocketService extends Service {
 
         }
     }
+    public void getRegId(){
+        new AsyncTask<Void, Void, String>() {
+            @Override
+            protected String doInBackground(Void... params) {
+                String msg = "";
+                try {
+                    if (gcm == null) {
+                        gcm = GoogleCloudMessaging.getInstance(getApplicationContext());
+                    }
+                    regid = gcm.register(PROJECT_NUMBER);
+                    System.out.println("reg id = "+regid);
+                    msg = "Device registered, registration ID=" + regid;
+                    Log.i("GCM",  msg);
+                } catch (IOException ex) {
+                    msg = "Error :" + ex.getMessage();
+
+                }
+                return msg;
+            }
+
+            @Override
+            protected void onPostExecute(String msg) {
+                sendRegId();
+            }
+        }.execute(null, null, null);
+    }
+
+    protected void sendRegId(){
+        if (regid != null) {
+            JSONObject data = new JSONObject();
+            try {
+                data.put("regId", regid);
+                System.out.println("send reg id = "+regid);
+                getSocket().emit("gcm:register", data);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+    };
+
 }

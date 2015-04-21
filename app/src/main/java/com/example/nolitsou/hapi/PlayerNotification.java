@@ -2,6 +2,7 @@ package com.example.nolitsou.hapi;
 
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.appwidget.AppWidgetManager;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v4.app.NotificationCompat;
@@ -16,6 +17,7 @@ public class PlayerNotification {
     public final static int PLAYER_NOTIF_ID = 1;
     public static RemoteViews playerRemoteViews;
     private static SocketService socketService;
+    private static NotificationCompat.Builder mBuilder;
 
     public static NotificationCompat.Builder getBuilder(SocketService socketService) {
         final Track playing = socketService.getPlayer().getPlaying();
@@ -78,6 +80,7 @@ public class PlayerNotification {
                 playerRemoteViews);
         return mBuilder;
     }
+
     public static RemoteViews create(SocketService socketService) {
         NotificationCompat.Builder mBuilder = getBuilder(socketService);
         NotificationManager mNotificationManager = (NotificationManager) socketService.getSystemService(Context.NOTIFICATION_SERVICE);
@@ -107,11 +110,54 @@ public class PlayerNotification {
                 playerRemoteViews.setViewVisibility(R.id.player_notif_pause, View.GONE);
             }
             NotificationManager mNotificationManager = (NotificationManager) socketService.getSystemService(Context.NOTIFICATION_SERVICE);
-            NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(
+            PlayerNotification.mBuilder = new NotificationCompat.Builder(
                     socketService).setSmallIcon(R.drawable.ic_launcher).setContent(
                     playerRemoteViews);
             mNotificationManager.notify(PLAYER_NOTIF_ID, mBuilder.build());
+
         }
+    }
+    public static void update(SocketService socketService) {
+        AppWidgetManager manager = AppWidgetManager.getInstance(socketService);
+        System.out.println("---UPDATE---");
+        final PlayerControl player = socketService.getPlayer();
+        if (playerRemoteViews == null) {
+            create(socketService);
+        }
+        if (player.getPlaying() != null) {
+            System.out.println("STATUS="+socketService.getPlayer().getStatus());
+            if (socketService.getPlayer().getStatus().equals("PLAY")) {
+                playerRemoteViews.setViewVisibility(R.id.player_notif_play, View.GONE);
+                playerRemoteViews.setViewVisibility(R.id.player_notif_pause, View.VISIBLE);
+            } else if (socketService.getPlayer().getStatus().equals("PAUSE")) {
+                playerRemoteViews.setViewVisibility(R.id.player_notif_play, View.VISIBLE);
+                playerRemoteViews.setViewVisibility(R.id.player_notif_pause, View.GONE);
+            }
+            playerRemoteViews.setTextViewText(R.id.player_notif_trackName, player.getPlaying().getName());
+            playerRemoteViews.setTextViewText(R.id.player_notif_artist, player.getPlaying().getArtistsStr());
+            if (player.getPlaying().getCover() != null) {
+                playerRemoteViews.setImageViewBitmap(R.id.player_notif_cover, player.getPlaying().getCover());
+            } else {
+                player.getPlaying().loadCover(socketService, new Ack() {
+                    @Override
+                    public void call(Object... args) {
+                        if (args.length > 0) {
+                            playerRemoteViews.setImageViewBitmap(R.id.player_notif_cover, player.getPlaying().getCover());
+                        }
+                    }
+                });
+            }
+        } else {
+            playerRemoteViews.setViewVisibility(R.id.player_notif_play, View.VISIBLE);
+            playerRemoteViews.setViewVisibility(R.id.player_notif_pause, View.GONE);
+            playerRemoteViews.setTextViewText(R.id.player_notif_trackName, "");
+            playerRemoteViews.setTextViewText(R.id.player_notif_artist, "");
+        }
+        NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(
+                socketService).setSmallIcon(R.drawable.ic_launcher).setContent(
+                playerRemoteViews);
+        NotificationManager mNotificationManager = (NotificationManager) socketService.getSystemService(Context.NOTIFICATION_SERVICE);
+        mNotificationManager.notify(PLAYER_NOTIF_ID, mBuilder.build());
     }
 
 

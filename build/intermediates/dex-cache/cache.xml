@@ -37,6 +37,13 @@
         <dex dex="/home/nolitsou/AndroidStudioProjects/HApi/app/build/intermediates/pre-dexed/debug/engine.io-client-0.4.1-ec8bd85502a5574952e5329548c79a52dc6fa0db.jar" />
     </item>
     <item
+        jar="/home/nolitsou/AndroidStudioProjects/HApi/app/build/intermediates/exploded-aar/com.google.android.gms/play-services/3.1.59/classes.jar"
+        jumboMode="false"
+        revision="21.1.2"
+        sha1="2dd7b1a9ea65bb03d9cd16df777eeaf537a1fc81">
+        <dex dex="/home/nolitsou/AndroidStudioProjects/HApi/app/build/intermediates/pre-dexed/debug/classes-55d4832ced1a5d5d205d7e16e0c5ac08c8a7a2b1.jar" />
+    </item>
+    <item
         jar="/home/nolitsou/AndroidStudioProjects/HApi/app/build/intermediates/exploded-aar/com.android.support/support-v4/21.0.3/classes.jar"
         jumboMode="false"
         revision="21.1.2"

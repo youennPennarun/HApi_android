@@ -170,7 +170,7 @@ public class PlayerControl {
     public void setStatus(String status) {
         this.status = status;
         System.out.println("got status : " + status);
-        PlayerNotification.create(socketService);
+        //PlayerNotification.create(socketService);
         socketService.broadcast(TRACK_STATUS);
 
     }
@@ -193,7 +193,7 @@ public class PlayerControl {
         if (idPlaying > -1 && idPlaying < playlist.size()) {
             playing = this.playlist.get(idPlaying);
             setStatus("PLAY");
-            PlayerNotification.create(socketService);
+            //PlayerNotification.create(socketService);
         } else {
             playing = null;
         }
@@ -234,7 +234,8 @@ public class PlayerControl {
                 }
 
             }
-        }).on("pi:player:status", new Emitter.Listener() {
+        })
+                /*.on("pi:player:status", new Emitter.Listener() {
             @Override
             public void call(Object... args) {
                 String status = null;
@@ -243,7 +244,7 @@ public class PlayerControl {
                     if (data.has("status")) {
                         status = data.getString("status");
                         setStatus(status);
-                    }
+                    }0
                 } catch (JSONException e) {
                     // TODO Auto-generated catch block
                     e.printStackTrace();
@@ -267,23 +268,12 @@ public class PlayerControl {
                 }
 
             }
-        }).on("music:playlist:get", new Emitter.Listener() {
+        })*/.on("music:playlist:get", new Emitter.Listener() {
             @Override
             public void call(Object... arg0) {
                 if (arg0.length > 0) {
                     JSONObject response = ((JSONObject) arg0[0]);
-                    JSONArray playlistJson;
-                    try {
-                        playlistJson = response.getJSONArray("playlist");
-                        ArrayList<Track> playlist = new ArrayList<Track>();
-                        for (int i = 0; i < playlistJson.length(); i++) {
-                            playlist.add(Track.jsonToTrack(playlistJson.getJSONObject(i)));
-                        }
-                        setPlaylist(playlist, response.getInt("idPlaying"));
-                    } catch (JSONException e) {
-                        // TODO Auto-generated catch block
-                        e.printStackTrace();
-                    }
+                    setPlaylist(response);
                 }
 
             }
@@ -315,4 +305,18 @@ public class PlayerControl {
         });
     }
 
+    public void setPlaylist(JSONObject response) {
+        JSONArray playlistJson;
+        try {
+            playlistJson = response.getJSONArray("playlist");
+            ArrayList<Track> playlist = new ArrayList<Track>();
+            for (int i = 0; i < playlistJson.length(); i++) {
+                playlist.add(Track.jsonToTrack(playlistJson.getJSONObject(i)));
+            }
+            setPlaylist(playlist, response.getInt("idPlaying"));
+        } catch (JSONException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
 }

@@ -10,7 +10,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.example.nolitsou.hapi.AbstractActivity;
-import com.example.nolitsou.hapi.PlayerControl;
 import com.example.nolitsou.hapi.R;
 import com.github.nkzawa.socketio.client.Ack;
 
@@ -30,12 +29,11 @@ public class PlaylistListAdapter extends ArrayAdapter<Track> {
     public View getView(final int position, View convertView, ViewGroup parent) {
         final LayoutInflater inflater = (LayoutInflater) context
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        final PlayerControl player = context.getSocketService().getPlayer();
         final Track track = values.get(position);
         final View rowView = inflater.inflate(R.layout.playlist_item, parent, false);
         ((TextView) rowView.findViewById(R.id.track_item_name)).setText(track.getName());
         LinearLayout trackItem = (LinearLayout) rowView.findViewById(R.id.playlist_item);
-        final ImageView coverView = (ImageView)rowView.findViewById(R.id.track_cover);
+        final ImageView coverView = (ImageView) rowView.findViewById(R.id.track_cover);
         if (track.getCover() == null) {
             track.loadCover(getContext(), new Ack() {
                 @Override
@@ -48,6 +46,7 @@ public class PlaylistListAdapter extends ArrayAdapter<Track> {
         } else {
             coverView.setImageBitmap(track.getCover());
         }
+        /*
         if (player.getIdPlaying() == position) {
             rowView.findViewById(R.id.track_isPlaying).setVisibility(View.VISIBLE);
         } else {
@@ -61,6 +60,7 @@ public class PlaylistListAdapter extends ArrayAdapter<Track> {
                 }
             }
         });
+        */
         return rowView;
     }
 

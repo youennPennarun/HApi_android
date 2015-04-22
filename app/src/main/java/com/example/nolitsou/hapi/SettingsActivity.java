@@ -11,12 +11,13 @@ public class SettingsActivity extends AbstractActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.settings_main);
         createDefault();
-        SettingsContainer container = (SettingsContainer)findViewById(R.id.settings);
+        SettingsContainer container = (SettingsContainer) findViewById(R.id.settings);
         container.loadData();
 
     }
+
     @Override
-    protected void loadData() {
+    public void loadData() {
 
     }
 }

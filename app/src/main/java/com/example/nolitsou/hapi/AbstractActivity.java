@@ -1,72 +1,50 @@
 package com.example.nolitsou.hapi;
 
-import android.content.ComponentName;
-import android.content.Context;
 import android.content.Intent;
-import android.content.ServiceConnection;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.IBinder;
-import android.os.Message;
-import android.os.Messenger;
-import android.os.RemoteException;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.nolitsou.hapi.data.Settings;
-import com.example.nolitsou.hapi.data.SocketData;
 import com.example.nolitsou.hapi.music.PlayerContainer;
-import com.example.nolitsou.hapi.server.SocketConnectionEnum;
 import com.example.nolitsou.hapi.server.SocketService;
+import com.example.nolitsou.hapi.utils.LoginTask;
+import com.example.nolitsou.hapi.utils.ServerLink;
 import com.example.nolitsou.hapi.widgets.SimpleSideDrawer;
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 
-import org.json.JSONException;
-import org.json.JSONObject;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.cookie.Cookie;
+import org.apache.http.message.BasicNameValuePair;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by nolitsou on 4/15/15.
  */
 public abstract class AbstractActivity extends FragmentActivity {
 
+    public static final String PROJECT_NUMBER = "585409898471";
     public final static String ACTION_PLAYER_SHOW = "PLAYER_SHOW";
+    private final static int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
     private final static String LOG_STR = "AbstractActivity:";
+    public GoogleCloudMessaging gcm;
+    public String regid;
     private SimpleSideDrawer mSlidingMenu;
     private ActionBarContainer actionBar;
-    private Messenger messenger = new Messenger(new IncomingHandler(this));
-    private ServiceConnection mConnection = new ServiceConnection() {
 
-        public void onServiceConnected(ComponentName className,
-                                       IBinder binder) {
-            Log.i(LOG_STR, "Binded to SocketService");
-            setSocketService(((SocketService.SocketBinder) binder).getService());
-            Messenger serviceMessenger = new Messenger(getSocketService().getMessenger().getBinder());
-            Message msg = Message.obtain(null, SocketService.REGISTER_CLIENT);
-            Log.i(LOG_STR, "Registering to socketService");
-            msg.replyTo = messenger;
-            try {
-                serviceMessenger.send(msg);
-            } catch (RemoteException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
-        }
-
-        public void onServiceDisconnected(ComponentName className) {
-
-        }
-    };
-    private SocketService socketService;
     private PlayerContainer playerContainer;
     private SlidingUpPanelLayout slidingLayout;
 
@@ -74,17 +52,20 @@ public abstract class AbstractActivity extends FragmentActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
     }
-    protected void createDefault () {Log.i(LOG_STR, "Stating AbstractActivity");
-        SocketData.setActivity(this);
+
+    protected void createDefault() {
+        Log.i(LOG_STR, "Stating AbstractActivity");
+        GCMSender.setGcm(GoogleCloudMessaging.getInstance(this));
         Settings.loadSettings(this);
-        PlayerControl.setPlayer(playerContainer);
         playerContainer = (PlayerContainer) findViewById(R.id.player);
+        PlayerControl.getInstance().setPlayerContainer(playerContainer);
         try {
             slidingLayout = (SlidingUpPanelLayout) findViewById(R.id.app_main_frame);
             slidingLayout.setPanelSlideListener(new SlidingUpPanelLayout.PanelSlideListener() {
                 @Override
                 public void onPanelSlide(View view, float v) {
                 }
+
                 @Override
                 public void onPanelCollapsed(View view) {
                     playerContainer.viewPanelCollapsed.setVisibility(View.VISIBLE);
@@ -96,31 +77,32 @@ public abstract class AbstractActivity extends FragmentActivity {
                     playerContainer.viewPanelCollapsed.setVisibility(View.GONE);
                     playerContainer.viewPanelExpanded.setVisibility(View.VISIBLE);
                 }
+
                 @Override
-                public void onPanelAnchored(View view) {}
+                public void onPanelAnchored(View view) {
+                }
+
                 @Override
-                public void onPanelHidden(View view) {}
+                public void onPanelHidden(View view) {
+                }
             });
-        } catch(ClassCastException e) {}
+        } catch (ClassCastException e) {
+        }
         setmSlidingMenu(new SimpleSideDrawer(this));
         getmSlidingMenu().setLeftBehindContentView(R.layout.drawermenu_left);
         LinearLayout menuGotoAlarm = ((LinearLayout) getmSlidingMenu().getRootView().findViewById(R.id.menu_goto_alarms));
-        actionBar = (ActionBarContainer)findViewById(R.id.app_frame_actionBar);
-        Intent i= new Intent(this, SocketService.class);
-        this.startService(i);
-        bindService(i, mConnection,
-                Context.BIND_AUTO_CREATE);
+        actionBar = (ActionBarContainer) findViewById(R.id.app_frame_actionBar);
         actionBar.setListeners();
+        getRegId();
         onNewIntent(getIntent());
 
     }
+
     @Override
     protected void onResume() {
         super.onResume();
         Intent intent = new Intent(this, SocketService.class);
         intent.putExtra("HOST", Settings.host);
-        bindService(intent, mConnection,
-                Context.BIND_AUTO_CREATE);
     }
     /*
     private boolean checkPlayServices() {
@@ -142,14 +124,13 @@ public abstract class AbstractActivity extends FragmentActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        unbindService(mConnection);
     }
 
 
     @Override
     public void onNewIntent(Intent intent) {
         String action = intent.getAction();
-        if(action != null) {
+        if (action != null) {
             System.out.println("new intent (action=" + action + ")");
             switch (action) {
                 case ACTION_PLAYER_SHOW:
@@ -162,7 +143,7 @@ public abstract class AbstractActivity extends FragmentActivity {
     }
 
     public void setActionBarTitle(String title) {
-        ((TextView)actionBar.findViewById(R.id.title_text)).setText(title);
+        ((TextView) actionBar.findViewById(R.id.title_text)).setText(title);
     }
 
     @Override
@@ -181,18 +162,6 @@ public abstract class AbstractActivity extends FragmentActivity {
     }
 
 
-    public SocketService getSocketService() {
-        return socketService;
-    }
-
-    public void setSocketService(SocketService socketService) {
-        this.socketService = socketService;
-    }
-
-    public boolean socketConnected() {
-        return (getSocketService() != null && getSocketService().isConnected());
-    }
-
     public SimpleSideDrawer getmSlidingMenu() {
         return mSlidingMenu;
     }
@@ -202,44 +171,79 @@ public abstract class AbstractActivity extends FragmentActivity {
     }
 
 
-    class IncomingHandler extends Handler {
-        private final Context context;
+    public abstract void loadData();
 
-        IncomingHandler(Context context) {
-            this.context = context;
-        }
-
-        @Override
-        public void handleMessage(Message msg) {
-            if (msg.what == SocketConnectionEnum.CONNECTED.getCode()) {
-                Toast toast = Toast.makeText(context, "Connected", Toast.LENGTH_SHORT);
-                toast.show();
-                Log.i(LOG_STR, "connected->send loadData");
-                loadData();
-                if(playerContainer != null) {
-                    playerContainer.setListeners();
-                    if (socketService.getPlayer().getPlaying() != null) {
-                        playerContainer.setPlaying(socketService.getPlayer().getPlaying());
-                    }
-                }
-            } else if (msg.what == SocketConnectionEnum.INVALID_CREDENTIALS.getCode()) {
-                // TODO
-            } else if (msg.what == PlayerControl.TRACK_UPDATE) {
-                if (socketService.getPlayer().getPlaying() != null) {
-                    playerContainer.setPlaying(socketService.getPlayer().getPlaying());
-                    playerContainer.playlistUpdated();
-                }
-            } else if (msg.what == PlayerControl.TRACK_STATUS && playerContainer != null) {
-                playerContainer.playerStatusChanged();
-            } else if (msg.what == PlayerControl.PLAYLIST_UPDATE && playerContainer != null) {
-                playerContainer.playlistUpdated();
-            } else {
-                super.handleMessage(msg);
-            }
-        }
+    public void notLoggedIn() {
+        new LoginTask(this).execute();
     }
 
 
-    protected abstract void loadData();
+    public void getRegId() {
+        new AsyncTask<Void, Void, String>() {
+            @Override
+            protected String doInBackground(Void... params) {
+                String msg = "";
+                try {
+                    if (gcm == null) {
+                        gcm = GoogleCloudMessaging.getInstance(getApplicationContext());
+                    }
+                    regid = gcm.register(PROJECT_NUMBER);
+                    System.out.println("reg id = " + regid);
+                    msg = "Device registered, registration ID=" + regid;
+                    Log.i("GCM", msg);
+                } catch (IOException ex) {
+                    msg = "Error :" + ex.getMessage();
+
+                }
+                return msg;
+            }
+
+            @Override
+            protected void onPostExecute(String msg) {
+                sendRegId();
+            }
+        }.execute(null, null, null);
+    }
+
+    protected void sendRegId() {
+        if (regid != null) {
+            System.out.println("send reg id = " + regid);
+            new SendGCMTask(regid).execute();
+        }
+    }
+
+    ;
+
+    class SendGCMTask extends AsyncTask<Void, Void, Void> {
+        private final String regId;
+
+        SendGCMTask(String regId) {
+            this.regId = regId;
+        }
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            System.out.println("register to " + Settings.host + "user/GCM with id " + regId);
+            List<Cookie> cookies;
+            HttpPost httppost = new HttpPost(Settings.host + "user/GCM");
+            try {
+                // Add your data
+                List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
+                nameValuePairs.add(new BasicNameValuePair("regId", regId));
+                httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+                // Execute HTTP Post Request
+                HttpResponse response = ServerLink.getHttpClient().execute(httppost);
+                HttpEntity entity = response.getEntity();
+                System.out.println("Login form get: " + response.getStatusLine());
+                PlayerControl.getInstance().updatePlaylist();
+
+            } catch (ClientProtocolException e) {
+                // TODO Auto-generated catch block
+            } catch (IOException e) {
+                // TODO Auto-generated catch block
+            }
+            return null;
+        }
+    }
 
 }

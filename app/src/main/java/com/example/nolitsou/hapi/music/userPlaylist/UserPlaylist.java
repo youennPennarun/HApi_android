@@ -6,7 +6,6 @@ import com.example.nolitsou.hapi.data.SocketData;
 import com.example.nolitsou.hapi.music.Track;
 import com.github.nkzawa.socketio.client.Ack;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -48,32 +47,7 @@ public class UserPlaylist extends SocketData {
         try {
             data.put("source", "spotify");
             data.put("id", spotify_id);
-            activity.getSocketService().getSocket().emit("music:playlist:tracks:get", data, new Ack() {
-                @Override
-                public void call(Object... arg0) {
-                    if (arg0.length > 0) {
-                        JSONObject json = (JSONObject) arg0[0];
-                        try {
-                            if (json.has("status") && json.getString("status").equals("success") && json.has("tracks")) {
-                                JSONObject tracksJson = json.getJSONObject("tracks");
-                                if (tracksJson.has("items")) {
-                                    JSONArray arr = tracksJson.getJSONArray("items");
-                                    for (int i = 0; i < arr.length(); i++) {
-                                        if (arr.getJSONObject(i).has("track")) {
-                                            tracks.add(Track.spotifyResultToTrack(arr.getJSONObject(i).getJSONObject("track")));
-                                        } else {
-                                        }
-                                    }
-                                }
-                            }
-                        } catch (JSONException e) {
-                            // TODO Auto-generated catch block
-                            e.printStackTrace();
-                        }
-                    }
-                    ack.call(arg0);
-                }
-            });
+
         } catch (JSONException e) {
             e.printStackTrace();
         }

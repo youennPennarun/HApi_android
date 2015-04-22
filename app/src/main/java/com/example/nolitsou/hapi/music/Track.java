@@ -142,13 +142,6 @@ public class Track extends SocketData {
         try {
             json.put("source", "spotify");
             json.put("id", spotify_id);
-            getSocket().emit("music:track:get", json, new Ack() {
-                @Override
-                public void call(Object... arg0) {
-                    if (arg0.length > 0) {
-                    }
-                }
-            });
         } catch (JSONException e) {
             e.printStackTrace();
         }

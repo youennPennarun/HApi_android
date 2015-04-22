@@ -33,7 +33,6 @@ public class TrackListAdapter extends ArrayAdapter<Track> {
         trackItem.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                context.getSocketService().getPlayer().playTrack(values.get(position));
             }
         });
         return rowView;

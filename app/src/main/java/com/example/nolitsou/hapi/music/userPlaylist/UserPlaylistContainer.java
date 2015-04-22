@@ -1,21 +1,20 @@
 package com.example.nolitsou.hapi.music.userPlaylist;
 
-import android.app.ProgressDialog;
 import android.content.Context;
-import android.os.AsyncTask;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import com.example.nolitsou.hapi.AbstractActivity;
 import com.example.nolitsou.hapi.R;
-import com.github.nkzawa.socketio.client.Ack;
+import com.example.nolitsou.hapi.data.Settings;
+import com.example.nolitsou.hapi.utils.GetJsonTask;
+import com.example.nolitsou.hapi.utils.ServerResponse;
+import com.example.nolitsou.hapi.utils.ServerResponseError;
 
 import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 
@@ -31,87 +30,47 @@ public class UserPlaylistContainer extends LinearLayout {
 
     @Override
     public void onFinishInflate() {
-    }
-
-    public void loadData() {
-        this.userPlaylists = ((AbstractActivity) getContext()).getSocketService().getUser().getUserPlaylists();
+        System.out.println("======HEY==============");
+        userPlaylists = new ArrayList<>();
         ListView listView = (ListView) getRootView().findViewById(R.id.playlist_list);
         adapter = new UserPlaylistsListAdapter((AbstractActivity) getContext(), userPlaylists, listView);
         listView.setAdapter(adapter);
-        Log.i(LOG_STR, "Getting playlists");
-        if (((AbstractActivity) getContext()).getSocketService().isConnected()) {
-            GetPlaylistsTask task = new GetPlaylistsTask(adapter, userPlaylists);
-            task.execute();
-        } else {
-            Toast toast = new Toast(getContext());
-            toast.setText("Not connected");
-            toast.show();
-        }
+        loadData();
     }
 
-    private class GetPlaylistsTask extends AsyncTask<String, String, Void> {
-        //private ProgressDialog mDialog;
-        private ProgressDialog mDialog;
-        private UserPlaylistsListAdapter adapter;
-        private boolean done;
-        private ArrayList<UserPlaylist> values;
+    public void loadData() {
+        Log.i(LOG_STR, "Getting playlists on url: " + Settings.host + "user/playlists");
 
-        public GetPlaylistsTask(UserPlaylistsListAdapter adapter, ArrayList<UserPlaylist> values) {
-            this.adapter = adapter;
-            this.values = values;
-        }
+        GetPlaylistsTask get = new GetPlaylistsTask();
+        Settings.loadSettings(getContext());
+        get.execute(Settings.host + "user/playlists");
+    }
 
-        protected void onPreExecute() {
-            mDialog = new ProgressDialog(getContext());
-            if (values == null || values.size() == 0) {
-                mDialog.setMessage("Please wait...");
-                mDialog.show();
-            }
-        }
-
-        protected Void doInBackground(String... data) {
-            done = false;
-            ((AbstractActivity) getContext()).getSocketService().getSocket().emit("music:playlists:get", new JSONObject(), new Ack() {
-                @Override
-                public void call(Object... arg0) {
-                    int i;
-                    if (arg0.length > 0) {
-                        JSONObject json = ((JSONObject) arg0[0]);
-                        try {
-                            if (json.has("status") && json.getString("status").equals("success")) {
-                                JSONArray playlistsJSON = json.getJSONObject("playlists").getJSONArray("items");
-                                for (i = 0; i < playlistsJSON.length(); i++) {
-                                    UserPlaylist p = UserPlaylist.spotifyResultToPlaylist(playlistsJSON.getJSONObject(i));
-                                    if (!values.contains(p)) {
-                                        values.add(p);
-                                    }
-                                }
-                            }
-                            Log.i(LOG_STR, "got " + values.size() + " values");
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                    done = true;
-                }
-            });
-            while (!done) {
+    class GetPlaylistsTask extends GetJsonTask {
+        @Override
+        protected void onPostExecute(ServerResponse result) {
+            int i = 0;
+            System.out.println(result);
+            if (result.success) {
+                System.out.println(result.data);
+                userPlaylists.clear();
                 try {
-                    Thread.sleep(50);
-                } catch (InterruptedException e) {
-                    // TODO Auto-generated catch block
+                    JSONArray list = result.data.getJSONArray("items");
+                    for (i = 0; i < list.length(); i++) {
+                        userPlaylists.add(UserPlaylist.spotifyResultToPlaylist(list.getJSONObject(i)));
+                    }
+                    adapter.notifyDataSetChanged();
+
+                } catch (JSONException e) {
                     e.printStackTrace();
                 }
+
+            } else if (((ServerResponseError) result).getCode() == 401) {
+                System.out.println((ServerResponseError) result);
+                ((AbstractActivity) getContext()).notLoggedIn();
             }
-            return null;
-        }
-
-        protected void onPostExecute(Void v) {
-            adapter.notifyDataSetChanged();
-            if (mDialog.isShowing())
-                mDialog.cancel();
-
         }
     }
+
 
 }

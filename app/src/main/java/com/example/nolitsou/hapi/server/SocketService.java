@@ -12,15 +12,9 @@ import android.os.RemoteException;
 import android.util.Log;
 
 import com.example.nolitsou.hapi.PlayerControl;
-import com.example.nolitsou.hapi.data.Alarm;
 import com.example.nolitsou.hapi.data.Settings;
 import com.example.nolitsou.hapi.data.User;
-import com.example.nolitsou.hapi.music.SearchArtist;
-import com.github.nkzawa.emitter.Emitter;
-import com.github.nkzawa.socketio.client.IO;
-import com.github.nkzawa.socketio.client.IO.Options;
 import com.github.nkzawa.socketio.client.Socket;
-import com.google.android.gms.gcm.GoogleCloudMessaging;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -38,7 +32,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.ref.WeakReference;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 
 public class SocketService extends Service {
@@ -50,151 +43,11 @@ public class SocketService extends Service {
     public SocketConnectionEnum status = SocketConnectionEnum.DISCONNECTED;
     ArrayList<Messenger> clients = new ArrayList<>();
     private Messenger messenger = new Messenger(new IncomingHandler(this));
-    private PlayerControl player = new PlayerControl(this);
+    private PlayerControl player = PlayerControl.getInstance();
     private Socket socket;
     private String host;
     private User user = new User();
 
-
-    private final static int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
-
-    public GoogleCloudMessaging gcm;
-    public String regid;
-    public static final String PROJECT_NUMBER = "585409898471";
-
-    public boolean connect(String url, String token) {
-        if (getSocket() != null) {
-            getSocket().disconnect();
-            getSocket().close();
-        }
-        try {
-            Options opts = new Options();
-            opts.reconnection = true;
-            opts.reconnectionDelay=0;
-            socket = (IO.socket(url + "?token=" + token, opts));
-            System.out.println("socket set");
-            setListeners();
-            getSocket().connect();
-
-        } catch (URISyntaxException e) {
-            e.printStackTrace();
-            return false;
-        }
-        while (!socket.connected()) {
-            try {
-                Thread.sleep(500);
-            } catch (InterruptedException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
-        }
-
-        System.out.println("connected : "+(socket.connected()));
-        return socket.connected();
-    }
-
-    private void setListeners() {
-        getSocket().on(Socket.EVENT_CONNECT, new Emitter.Listener() {
-            @Override
-            public void call(Object... args) {
-                socket.emit("music:playing:get");
-                socket.emit("pi:sound:volume:get");
-                socket.emit("pi:is-logged-in");
-                socket.emit("music:playlist:get");
-            }
-
-        }).on("pi:is-logged-in", new Emitter.Listener() {
-            @Override
-            public void call(Object... args) {
-                // TODO
-
-            }
-        }).on("pi:logged-out", new Emitter.Listener() {
-            @Override
-            public void call(Object... args) {
-                //activity.getPlayerFragment().setPiNotConnectedView();
-                piConnected = false;
-                //activity.notifPiDisconnected();
-            }
-        }).on("pi:logged-in", new Emitter.Listener() {
-            @Override
-            public void call(Object... args) {
-                /*
-                activity.getPlayerFragment().setPiConnectedView();
-				piConnected = true;
-				activity.dismissPiNotif();
-				 */
-            }
-        }).on(Socket.EVENT_DISCONNECT, new Emitter.Listener() {
-            @Override
-            public void call(Object... args) {
-                Log.w(LOG_STR, "socket disconnected");
-            }
-
-        }).on(Socket.EVENT_RECONNECT_ATTEMPT, new Emitter.Listener(){
-            @Override
-            public void call(Object... args) {
-                System.out.println("RECONNECTING!!!!!");
-            }
-        }).on(Socket.EVENT_RECONNECT_ERROR, new Emitter.Listener() {
-            @Override
-            public void call(Object... args) {
-                if (args.length > 0 && args[0] instanceof  JSONObject) {
-                    JSONObject error = (JSONObject) args[0];
-                    Log.e(LOG_STR, "socket connection error: " + args[0]);
-                    try {
-                        if (error.getString("type").equals("UnauthorizedError") || error.getString("code").equals("invalid_token")) {
-                            socket.disconnect();
-                            reconnect();
-                        }
-                    } catch (JSONException e) {
-                        // TODO Auto-generated catch block
-                        e.printStackTrace();
-                    }
-                }
-            }
-
-        }).on(Socket.EVENT_CONNECT_ERROR, new Emitter.Listener() {
-            @Override
-            public void call(Object... args) {
-                if (args.length > 0 && args[0] instanceof  JSONObject) {
-                    JSONObject error = (JSONObject) args[0];
-                    Log.e(LOG_STR, "socket connection error: " + args[0]);
-                    try {
-                        if (error.getString("type").equals("UnauthorizedError") || error.getString("code").equals("invalid_token")) {
-                            socket.disconnect();
-                            reconnect();
-                        }
-                    } catch (JSONException e) {
-                        // TODO Auto-generated catch block
-                        e.printStackTrace();
-                    }
-                }
-            }
-
-        }).on(Socket.EVENT_ERROR, new Emitter.Listener() {
-            @Override
-            public void call(Object... args) {
-                if (args.length > 0) {
-                    JSONObject error = (JSONObject) args[0];
-                    Log.e(LOG_STR, "socket connection error: " + args[0]);
-                    try {
-                        if (error.getString("type").equals("UnauthorizedError") || error.getString("code").equals("invalid_token")) {
-                            socket.disconnect();
-                            reconnect();
-                        }
-                    } catch (JSONException e) {
-                        // TODO Auto-generated catch block
-                        e.printStackTrace();
-                    }
-                }
-            }
-
-        });
-        Alarm.setSocket(getSocket());
-        SearchArtist.setSocket(getSocket());
-        player.setSocket(getSocket());
-    }
 
     public void reconnect() {
         Log.i(LOG_STR, "reconnecting");
@@ -236,6 +89,7 @@ public class SocketService extends Service {
         Log.i(LOG_STR, "Got binding request");
         return mBinder;
     }
+
     @Override
     public void onDestroy() {
         Log.w("SocketService", "!!!DESTROYED!!!");
@@ -423,12 +277,7 @@ public class SocketService extends Service {
                         String token = data.getString("token");
                         Log.i(LOG_STR, "Connecting to socket");
                         //TextView t=(TextView)AbstractActivity.findViewById(R.id.connectionStatus);
-                        if (connect(url, token)) {
-                            connectionTaskDone();
-                            getRegId();
-                        } else {
-                            connectionTaskDone(SocketConnectionEnum.UNKNOWN_ERROR);
-                        }
+
                     }
                 } catch (JSONException e1) {
                     e1.printStackTrace();
@@ -438,44 +287,5 @@ public class SocketService extends Service {
 
         }
     }
-    public void getRegId(){
-        new AsyncTask<Void, Void, String>() {
-            @Override
-            protected String doInBackground(Void... params) {
-                String msg = "";
-                try {
-                    if (gcm == null) {
-                        gcm = GoogleCloudMessaging.getInstance(getApplicationContext());
-                    }
-                    regid = gcm.register(PROJECT_NUMBER);
-                    System.out.println("reg id = "+regid);
-                    msg = "Device registered, registration ID=" + regid;
-                    Log.i("GCM",  msg);
-                } catch (IOException ex) {
-                    msg = "Error :" + ex.getMessage();
-
-                }
-                return msg;
-            }
-
-            @Override
-            protected void onPostExecute(String msg) {
-                sendRegId();
-            }
-        }.execute(null, null, null);
-    }
-
-    protected void sendRegId(){
-        if (regid != null) {
-            JSONObject data = new JSONObject();
-            try {
-                data.put("regId", regid);
-                System.out.println("send reg id = "+regid);
-                getSocket().emit("gcm:register", data);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }
-    };
 
 }

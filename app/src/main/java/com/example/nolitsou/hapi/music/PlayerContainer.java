@@ -18,14 +18,12 @@ import com.example.nolitsou.hapi.R;
 import com.github.nkzawa.socketio.client.Ack;
 
 public class PlayerContainer extends FrameLayout {
+    public View viewPanelExpanded;
+    public View viewPanelCollapsed;
     private ImageView playerCover;
     private ImageView playerHeaderCover;
     private TextView trackName;
     private TextView trackArtist;
-
-    public View viewPanelExpanded;
-    public View viewPanelCollapsed;
-
     private View playButton;
     private View pauseButton;
     private View nextButton;
@@ -51,6 +49,7 @@ public class PlayerContainer extends FrameLayout {
     @Override
     public void onFinishInflate() {
         super.onFinishInflate();
+        PlayerControl.getInstance();
         this.viewPanelExpanded = getRootView().findViewById(R.id.viewPanelExpanded);
         this.viewPanelCollapsed = getRootView().findViewById(R.id.viewPanelCollapsed);
         this.showPlaylist = getRootView().findViewById(R.id.player_header_show_playlist);
@@ -71,166 +70,151 @@ public class PlayerContainer extends FrameLayout {
         this.playlistView = getRootView().findViewById(R.id.playlistView);
         this.playerContentView = getRootView().findViewById(R.id.player_content);
 
-        this.playlistListView = (ListView)getRootView().findViewById(R.id.playlistList);
+        this.playlistListView = (ListView) getRootView().findViewById(R.id.playlistList);
 
-
-
-    }
-
-    public void setPlaying(final Track track) {
-        if (trackName != null) {
-            if (track != null) {
-                if (track.getCover() == null) {
-                    track.loadCover(getContext(), new Ack() {
-                        @Override
-                        public void call(Object... args) {
-                            if (args.length > 0) {
-                                playerCover.setImageBitmap(track.getCover());
-                                playerHeaderCover.setImageBitmap(track.getCover());
-                            }
-                        }
-                    });
-                } else {
-                    playerCover.setImageBitmap(track.getCover());
-                    playerHeaderCover.setImageBitmap(track.getCover());
-                }
-                trackName.setText(track.getName());
-                trackArtist.setText(track.getArtistsStr());
-            } else {
-                trackName.setText("");
-                trackArtist.setText("");
-            }
-        } else {
-        }
+        updatePlaying();
+        updateStatus();
+        setListeners();
     }
 
     public void setListeners() {
-        if (playButton != null) {
-            final PlayerControl player = ((AbstractActivity) getContext()).getSocketService().getPlayer();
-            this.playlistAdapter = new PlaylistListAdapter((AbstractActivity)getContext(), player.getPlaylist());
-            playlistListView.setAdapter(playlistAdapter);
-            playButton.setOnClickListener(new OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    player.play();
-                }
-            });
-            pauseButton.setOnClickListener(new OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    player.pause();
-                }
-            });
-            playButtonHead.setOnClickListener(new OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    player.play();
-                }
-            });
-            pauseButtonHead.setOnClickListener(new OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    player.pause();
-                }
-            });
-            nextButton.setOnClickListener(new OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    player.next();
-                }
-            });
-            previousButton.setOnClickListener(new OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    player.previous();
-                }
-            });
-            playRandom.setOnClickListener(new OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    player.playRandom();
-                }
-            });
+        final PlayerControl player = PlayerControl.getInstance();
+        playButton.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                player.play();
+            }
+        });
+        playButtonHead.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                player.play();
+            }
+        });
+        pauseButton.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                player.pause();
+            }
+        });
+        pauseButtonHead.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                player.pause();
+            }
+        });
 
-            showPlaylist.setOnClickListener(new OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (playlistView.getVisibility() == View.VISIBLE) {
-                        playlistView.setVisibility(View.GONE);
-                        playerContentView.setVisibility(View.VISIBLE);
-                    } else {
-                        playlistView.setVisibility(View.VISIBLE);
-                        playerContentView.setVisibility(View.GONE);
+        showPlaylist.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (playlistView.getVisibility() == View.VISIBLE) {
+                    playlistView.setVisibility(View.GONE);
+                    playerContentView.setVisibility(View.VISIBLE);
+                } else {
+                    playlistView.setVisibility(View.VISIBLE);
+                    playerContentView.setVisibility(View.GONE);
+                }
+            }
+        });
+
+        showVolume.setOnClickListener(new OnClickListener() {
+            PlayerControl player = PlayerControl.getInstance();
+            @Override
+            public void onClick(View v) {
+                if (volumeBar == null) {
+                    WindowManager wm = (WindowManager) getContext().getSystemService(Context.WINDOW_SERVICE);
+                    Display display = wm.getDefaultDisplay();
+                    Point size = new Point();
+                    display.getSize(size);
+                    int windowWidth = size.x;
+                    int[] buttonPos = {0, 0};
+                    showVolume.getLocationOnScreen(buttonPos);
+                    volumeBar = new SeekBar(getContext());
+                    volumeBar.setMax(50);
+                    if (player != null) {
+                        volumeBar.setProgress(player.getVolume());
                     }
-                }
-            });
-
-            showVolume.setOnClickListener(new OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (volumeBar == null) {
-                        WindowManager wm = (WindowManager) getContext().getSystemService(Context.WINDOW_SERVICE);
-                        Display display = wm.getDefaultDisplay();
-                        Point size = new Point();
-                        display.getSize(size);
-                        int windowWidth = size.x;
-                        int[] buttonPos = {0, 0};
-                        showVolume.getLocationOnScreen(buttonPos);
-                        volumeBar = new SeekBar(getContext());
-                        volumeBar.setMax(50);
-                        if (player != null) {
-                            volumeBar.setProgress(player.getVolume());
+                    volumeBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+                        @Override
+                        public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                            if (fromUser) {
+                                player.saveVolume(progress);
+                            }
                         }
-                        volumeBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-                            @Override
-                            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                                if (fromUser) {
-                                    player.saveVolume(progress);
-                                }
-                            }
 
-                            @Override
-                            public void onStartTrackingTouch(SeekBar seekBar) {
-                            }
+                        @Override
+                        public void onStartTrackingTouch(SeekBar seekBar) {
+                        }
 
-                            @Override
-                            public void onStopTrackingTouch(SeekBar seekBar) {
-                            }
-                        });
-                        FrameLayout.LayoutParams params = new FrameLayout.LayoutParams((windowWidth / 4) * 3, 100);
-                        params.leftMargin = buttonPos[0];
-                        params.topMargin = buttonPos[1] - showVolume.getHeight() - 5;
-                        ((PlayerContainer) findViewById(R.id.player)).addView(volumeBar, params);
-                    } else {
-                        ((PlayerContainer) findViewById(R.id.player)).removeView(volumeBar);
-                        volumeBar = null;
-                    }
+                        @Override
+                        public void onStopTrackingTouch(SeekBar seekBar) {
+                        }
+                    });
+                    FrameLayout.LayoutParams params = new FrameLayout.LayoutParams((windowWidth / 4) * 3, 100);
+                    params.leftMargin = buttonPos[0];
+                    params.topMargin = buttonPos[1] - showVolume.getHeight() - 5;
+                    ((PlayerContainer) findViewById(R.id.player)).addView(volumeBar, params);
+                } else {
+                    ((PlayerContainer) findViewById(R.id.player)).removeView(volumeBar);
+                    volumeBar = null;
                 }
-            });
-        }
-    }
+            }
+        });
 
-    public void playerStatusChanged() {
-        final PlayerControl player = ((AbstractActivity) getContext()).getSocketService().getPlayer();
-        if (player.getStatus().equals("PLAY")) {
-            playButtonHead.setVisibility(View.GONE);
-            pauseButtonHead.setVisibility(View.VISIBLE);
-            playButton.setVisibility(View.GONE);
-            pauseButton.setVisibility(View.VISIBLE);
-        } else if (player.getStatus().equals("PAUSE")) {
-            playButtonHead.setVisibility(View.VISIBLE);
-            pauseButtonHead.setVisibility(View.GONE);
-            playButton.setVisibility(View.VISIBLE);
-            pauseButton.setVisibility(View.GONE);
-        }
     }
 
     public void playlistUpdated() {
-        if(playlistAdapter != null) {
-            final PlayerControl player = ((AbstractActivity) getContext()).getSocketService().getPlayer();
-            this.playlistAdapter = new PlaylistListAdapter((AbstractActivity)getContext(), player.getPlaylist());
-            playlistListView.setAdapter(playlistAdapter);
-            playlistAdapter.notifyDataSetChanged();
-        }
+
+    }
+    public void updateStatus() {
+        ((AbstractActivity)getContext()).runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                System.out.println("PlayerContainre: setting status");
+                PlayerControl player = PlayerControl.getInstance();
+                if (player.getStatus().equals(PlayerControl.STATUS_PLAY)) {
+                    pauseButton.setVisibility(View.VISIBLE);
+                    pauseButtonHead.setVisibility(View.VISIBLE);
+                    playButton.setVisibility(View.GONE);
+                    playButtonHead.setVisibility(View.GONE);
+                } else if (player.getStatus().equals(PlayerControl.STATUS_PAUSE)) {
+                    pauseButton.setVisibility(View.GONE);
+                    pauseButtonHead.setVisibility(View.GONE);
+                    playButton.setVisibility(View.VISIBLE);
+                    playButtonHead.setVisibility(View.VISIBLE);
+                }
+            }
+        });
+
+    }
+    public void updatePlaying() {
+        ((AbstractActivity)getContext()).runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                final Track track = PlayerControl.getInstance().getPlaying();
+                if (track != null) {
+                    if (track.getCover() == null) {
+                        track.loadCover(getContext(), new Ack() {
+                            @Override
+                            public void call(Object... args) {
+                                if (args.length > 0) {
+                                    playerCover.setImageBitmap(track.getCover());
+                                    playerHeaderCover.setImageBitmap(track.getCover());
+                                }
+                            }
+                        });
+                    } else {
+                        playerCover.setImageBitmap(track.getCover());
+                        playerHeaderCover.setImageBitmap(track.getCover());
+                    }
+                    trackName.setText(track.getName());
+                    trackArtist.setText(track.getArtistsStr());
+                } else {
+                    trackName.setText("");
+                    trackArtist.setText("");
+                }
+            }
+        });
+
     }
 }

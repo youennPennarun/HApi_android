@@ -43,7 +43,6 @@ public class Artist extends SocketData {
         try {
             artist.put("id", id);
             data.put("artist", artist);
-            activity.getSocketService().getSocket().emit("music:artist:get", data, ack);
         } catch (JSONException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();

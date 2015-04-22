@@ -10,11 +10,12 @@ public class AlarmActivity extends AbstractActivity {
         setContentView(R.layout.alarm_main);
         createDefault();
     }
-    @Override
-    protected void loadData() {
-        AlarmContainer container = (AlarmContainer)findViewById(R.id.alarm_content_layout);
-        container.loadData();
 
+    @Override
+    public void loadData() {
+        AlarmContainer alarmContainer = (AlarmContainer) findViewById(R.id.alarm_content_layout);
+        System.out.println("Refresh data...");
+        alarmContainer.loadData();
     }
 }
 

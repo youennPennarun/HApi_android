@@ -52,7 +52,6 @@ public class SearchArtist extends SocketData {
         try {
             query.put("artist", queryStr);
             data.put("query", query);
-            activity.getSocketService().getSocket().emit("music:search", data);
             return true;
         } catch (JSONException e) {
             // TODO Auto-generated catch block
@@ -67,7 +66,6 @@ public class SearchArtist extends SocketData {
         try {
             query.put("artist", queryStr);
             data.put("query", query);
-            activity.getSocketService().getSocket().emit("music:search", data, ack);
             return true;
         } catch (JSONException e) {
             // TODO Auto-generated catch block

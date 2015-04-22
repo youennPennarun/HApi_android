@@ -12,6 +12,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.nolitsou.hapi.AbstractActivity;
+import com.example.nolitsou.hapi.PlayerControl;
 import com.example.nolitsou.hapi.R;
 import com.example.nolitsou.hapi.utils.LoadImageTask;
 
@@ -69,7 +70,7 @@ public class UserPlaylistsListAdapter extends ArrayAdapter<UserPlaylist> {
         cover.setOnLongClickListener(new View.OnLongClickListener() {
             public boolean onLongClick(View view) {
                 if (!scrolling) {
-                    activity.getSocketService().getPlayer().playPlaylist(userPlaylist);
+                    PlayerControl.playPlaylist(userPlaylist);
                 }
                 return false;  // avoid extra click events
             }

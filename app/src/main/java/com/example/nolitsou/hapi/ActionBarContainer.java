@@ -35,6 +35,7 @@ public class ActionBarContainer extends RelativeLayout {
         });
 
     }
+
     public void setListeners() {
         drawer = ((AbstractActivity) getContext()).getmSlidingMenu();
         drawer.getRootView().findViewById(R.id.menu_goto_alarms).setOnClickListener(new OnClickListener() {

@@ -10,8 +10,8 @@ import android.widget.ListView;
 
 import com.example.nolitsou.hapi.AbstractActivity;
 import com.example.nolitsou.hapi.R;
-import com.example.nolitsou.hapi.music.TrackListAdapter;
 import com.example.nolitsou.hapi.music.Track;
+import com.example.nolitsou.hapi.music.TrackListAdapter;
 import com.github.nkzawa.socketio.client.Ack;
 
 import java.util.ArrayList;

@@ -14,9 +14,10 @@ public class PlaylistActivity extends AbstractActivity {
         setContentView(R.layout.user_playlist_main);
         createDefault();
     }
+
     @Override
-    protected void loadData() {
-        UserPlaylistContainer container = (UserPlaylistContainer)findViewById(R.id.playlists);
+    public void loadData() {
+        UserPlaylistContainer container = (UserPlaylistContainer) findViewById(R.id.playlists);
         container.loadData();
 
     }

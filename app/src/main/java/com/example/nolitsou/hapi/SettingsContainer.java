@@ -20,6 +20,7 @@ public class SettingsContainer extends RelativeLayout {
     public void onFinishInflate() {
 
     }
+
     public void loadData() {
         EditText hostValue = (EditText) getRootView().findViewById(R.id.hostValue);
         EditText usernameValue = (EditText) getRootView().findViewById(R.id.usernameValue);

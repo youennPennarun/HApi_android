@@ -117,10 +117,10 @@ public class PlayerNotification {
         AppWidgetManager manager = AppWidgetManager.getInstance(context);
         System.out.println("---UPDATE---");
         final PlayerControl player = PlayerControl.getInstance();
-        if (playerRemoteViews == null) {
-            create(context);
-        }
         if (player.getPlaying() != null) {
+            if (playerRemoteViews == null) {
+                create(context);
+            }
             System.out.println("STATUS=" + PlayerControl.getInstance().getStatus());
             if (PlayerControl.getInstance().getStatus().equals("PLAY")) {
                 playerRemoteViews.setViewVisibility(R.id.player_notif_play, View.GONE);
@@ -143,17 +143,12 @@ public class PlayerNotification {
                     }
                 });
             }
-        } else {
-            playerRemoteViews.setViewVisibility(R.id.player_notif_play, View.VISIBLE);
-            playerRemoteViews.setViewVisibility(R.id.player_notif_pause, View.GONE);
-            playerRemoteViews.setTextViewText(R.id.player_notif_trackName, "");
-            playerRemoteViews.setTextViewText(R.id.player_notif_artist, "");
+            NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(
+                    context).setSmallIcon(R.drawable.ic_launcher).setContent(
+                    playerRemoteViews);
+            NotificationManager mNotificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+            mNotificationManager.notify(PLAYER_NOTIF_ID, mBuilder.build());
         }
-        NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(
-                context).setSmallIcon(R.drawable.ic_launcher).setContent(
-                playerRemoteViews);
-        NotificationManager mNotificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-        mNotificationManager.notify(PLAYER_NOTIF_ID, mBuilder.build());
     }
 
 

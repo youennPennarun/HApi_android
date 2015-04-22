@@ -54,7 +54,7 @@ public class GcmIntentService extends IntentService {
             if (extras.containsKey(PLAYER_PLAYLIST_UPDATE)) {
                 PlayerControl.getInstance().updatePlaylist();
             }
-
+            PlayerNotification.update(this);
         } else {
             System.out.println("empty msg");
         }

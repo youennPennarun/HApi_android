@@ -54,6 +54,7 @@ public abstract class AbstractActivity extends FragmentActivity {
     }
 
     protected void createDefault() {
+        PlayerNotification.update(this);
         Log.i(LOG_STR, "Stating AbstractActivity");
         GCMSender.setGcm(GoogleCloudMessaging.getInstance(this));
         Settings.loadSettings(this);

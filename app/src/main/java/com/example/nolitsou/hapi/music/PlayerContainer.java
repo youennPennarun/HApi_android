@@ -117,6 +117,20 @@ public class PlayerContainer extends FrameLayout {
             }
         });
 
+        nextButton.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                player.next();
+            }
+        });
+
+        previousButton.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                player.previous();
+            }
+        });
+
         showVolume.setOnClickListener(new OnClickListener() {
             PlayerControl player = PlayerControl.getInstance();
             @Override

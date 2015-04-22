@@ -62,9 +62,11 @@ public class PlayerControl {
     }
 
     public void previous() {
+        GCMSender.send("music:player:previous");
     }
 
     public void next() {
+        GCMSender.send("music:player:next");
     }
 
     public int getVolume() {
